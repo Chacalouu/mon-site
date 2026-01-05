@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TMPACK Ratings</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  min-height:100vh;
+  background:url("../background.jpeg") center/cover no-repeat fixed;
+  color:#fff;
+}
+
+.overlay{
+  min-height:100vh;
+  background:rgba(0,0,0,.65);
+  padding-bottom:60px;
+}
+
+/* ===== MENU ===== */
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+
+nav button{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:32px;
+  cursor:pointer;
+  padding:15px 14px;
+}
+
+nav button:hover{color:#c084fc}
+
+/* ===== TABLE ===== */
+.container{
+  max-width:650px;
+  margin:40px auto;
+  padding:0 20px;
+}
+
+h1,h2{
+  text-align:center;
+  font-weight:normal;
+}
+
+h2{margin-bottom:15px}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(6px);
+}
+
+th,td{
+  padding:10px 12px;
+  text-align:left;
+}
+
+th{
+  cursor:pointer;
+  background:rgba(124,58,237,.35);
+  user-select:none;
+}
+
+th:hover{background:rgba(124,58,237,.6)}
+
+tr:nth-child(even){
+  background:rgba(255,255,255,.03);
+}
+
+.note{
+  text-align:center;
+  font-weight:bold;
+}
+
+.center{text-align:center}
+
+/* ===== SEARCH ===== */
+.search-box{
+  text-align:center;
+  margin:15px 0 25px;
+}
+
+.search-box input{
+  width:100%;
+  max-width:420px;
+  padding:12px 14px;
+  border-radius:10px;
+  border:none;
+  font-size:16px;
+  outline:none;
+  background:rgba(0,0,0,.55);
+  color:#fff;
+  backdrop-filter:blur(6px);
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  position:fixed;
+  bottom:12px;
+  width:100%;
+  text-align:center;
+  font-size:14px;
+  opacity:0.6;
+  pointer-events:none;
+}
+
+.back-btn{
+  position:fixed;
+  top:14px;
+  left:14px;
+  z-index:999;
+  padding:10px 16px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+  color:#fff;
+  text-decoration:none;
+  border-radius:10px;
+  font-size:16px;
+  transition:.2s;
+}
+
+.back-btn:hover{
+  background:rgba(124,58,237,.8);
+  transform:translateX(-2px);
+}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<a href="https://chacalou.com/pack/pack.html" class="back-btn">← Back</a>
+
+<nav>
+<button onclick="location.href='../index.html'">Home</button>
+<button onclick="location.href='../prog/prog.html'">Schedule</button>
+<button onclick="location.href='../survivor/survivor.html'">Survivor</button>
+<button onclick="location.href='../twenty/twenty.html'">Twenty</button>
+<button onclick="location.href='../Rivals/index.html'">Rivals</button>
+<button onclick="location.href='pack.html'">TM Pack</button>
+<button onclick="location.href='../maps/maps.html'">My Maps</button>
+<button onclick="location.href='../Mapping/minuteur.html'">Mapping</button>
+<button onclick="location.href='../Jeux/jeux.html'">Games</button>
+</nav>
+
+<div class="container">
+<h1>🏆 TMPACK Ratings 🏆</h1>
+<h2>Sort & search players</h2>
+
+<div class="search-box">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search by name, country or rating..."
+    onkeyup="filterPlayers()"
+  />
+</div>
+
+<table>
+<thead>
+<tr>
+<th class="center">#</th>
+<th onclick="sortTable('name')">Name</th>
+<th class="center" onclick="sortTable('score')">Rating</th>
+<th onclick="sortTable('country')">Country</th>
+</tr>
+</thead>
+<tbody id="tableBody"></tbody>
+</table>
+</div>
+
+<footer class="footer">Chacalou.com ©</footer>
+</div>
+
+<script>
+const players = [
+  {name:"Trident",country:"Afrique du Sud",score:84},
+{name:"Granady",country:"Allemagne",score:94},
+{name:"Piranha",country:"Allemagne",score:90},
+{name:"Habe",country:"Allemagne",score:89},
+{name:"Marius",country:"Allemagne",score:89},
+{name:"Chroma",country:"Allemagne",score:88},
+{name:"Nuprime",country:"Allemagne",score:88},
+{name:"Teuflum",country:"Allemagne",score:88},
+{name:"Dexter",country:"Allemagne",score:87},
+{name:"Imot",country:"Allemagne",score:87},
+{name:"Massa",country:"Allemagne",score:87},
+{name:"Purple",country:"Allemagne",score:87},
+{name:"Shark",country:"Allemagne",score:87},
+{name:"Shorty",country:"Allemagne",score:87},
+{name:"Yamii",country:"Allemagne",score:86},
+{name:"Barbos",country:"Allemagne",score:86},
+{name:"Amaterasu",country:"Allemagne",score:85},
+{name:"Betatoast",country:"Allemagne",score:85},
+{name:"Iampd",country:"Allemagne",score:85},
+{name:"Patrose",country:"Allemagne",score:85},
+{name:"Down",country:"Allemagne",score:84},
+{name:"Hobbit",country:"Allemagne",score:84},
+{name:"Lars",country:"Allemagne",score:84},
+{name:"Racehans",country:"Allemagne",score:84},
+{name:"Ratchet",country:"Allemagne",score:84},
+{name:"Hayiom",country:"Allemagne",score:83},
+{name:"Luckersturbo",country:"Allemagne",score:83},
+{name:"Fegir",country:"Allemagne",score:82},
+{name:"Juliano",country:"Allemagne",score:82},
+{name:"Tala",country:"Allemagne",score:81},
+{name:"Hellowmarc",country:"Allemagne",score:80},
+{name:"Kuebelchris",country:"Allemagne",score:80},
+{name:"Pecuniaadest",country:"Allemagne",score:78},
+{name:"Revolution",country:"Allemagne",score:77},
+{name:"Norman",country:"Allemagne",score:16},
+{name:"Epos",country:"Angleterre",score:93},
+{name:"Cozzer04",country:"Angleterre",score:91},
+{name:"Pac",country:"Angleterre",score:90},
+{name:"Jdon",country:"Angleterre",score:89},
+{name:"Quibz",country:"Angleterre",score:88},
+{name:"Bozbez",country:"Angleterre",score:87},
+{name:"Whizzy",country:"Angleterre",score:87},
+{name:"Burntbagels",country:"Angleterre",score:85},
+{name:"Darklight",country:"Angleterre",score:85},
+{name:"Idoless",country:"Angleterre",score:85},
+{name:"Josh1248",country:"Angleterre",score:83},
+{name:"Sabre",country:"Angleterre",score:83},
+{name:"Lordquacked",country:"Angleterre",score:82},
+{name:"Eggy",country:"Angleterre",score:81},
+{name:"Moose",country:"Angleterre",score:80},
+{name:"Socks",country:"Angleterre",score:78},
+{name:"Chocoloco",country:"Angleterre",score:72},
+{name:"Baupro",country:"Argentine",score:84},
+{name:"Noiszia",country:"Argentine",score:82},
+{name:"Mudda",country:"Australie",score:93},
+{name:"Nova",country:"Australie",score:88},
+{name:"Redbolt",country:"Australie",score:87},
+{name:"Smithy",country:"Australie",score:85},
+{name:"Mebe12",country:"Australie",score:82},
+{name:"Simplynick",country:"Australie",score:79},
+{name:"Winkyface",country:"Australie",score:75},
+{name:"Krude",country:"Australie",score:78},
+{name:"Ikarus",country:"Autriche",score:86},
+{name:"Samifying",country:"Autriche",score:85},
+{name:"Rollin",country:"Autriche",score:84},
+{name:"Asse",country:"Autriche",score:83},
+{name:"Pezi",country:"Autriche",score:80},
+{name:"Mariina",country:"Autriche",score:79},
+{name:"Crosshairs",country:"Azerbaïdjan",score:84},
+{name:"Skandear",country:"Belgique",score:91},
+{name:"Scrapie",country:"Belgique",score:90},
+{name:"Eria",country:"Belgique",score:89},
+{name:"Dofault",country:"Belgique",score:88},
+{name:"Soulja",country:"Belgique",score:86},
+{name:"Snappie",country:"Belgique",score:83},
+{name:"Arthaniir",country:"Belgique",score:82},
+{name:"Rasg",country:"Belgique",score:82},
+{name:"Sano",country:"Belgique",score:82},
+{name:"Aqlx",country:"Belgique",score:81},
+{name:"Youri",country:"Belgique",score:80},
+{name:"Vikentiyy",country:"Belgique",score:80},
+{name:"Bvddy",country:"Belgique",score:83},
+{name:"Olumsy",country:"Belgique",score:78},
+{name:"Ryou",country:"Belgique",score:72},
+{name:"Atome",country:"Belgique",score:70},
+{name:"Bepeze",country:"Brésil",score:87},
+{name:"Mtat",country:"Brésil",score:87},
+{name:"Radiaxo",country:"Brésil",score:83},
+{name:"Kyle",country:"Brésil",score:80},
+{name:"Mickbzh",country:"Brezhoneg",score:68},
+{name:"Carljr",country:"Canada",score:95},
+{name:"Lingo",country:"Canada",score:89},
+{name:"Abadpcgamer",country:"Canada",score:86},
+{name:"Raistlin",country:"Canada",score:86},
+{name:"Zodiark",country:"Canada",score:86},
+{name:"Cinn",country:"Canada",score:85},
+{name:"Thombern",country:"Canada",score:84},
+{name:"Mathyper",country:"Canada",score:80},
+{name:"Ozy",country:"Canada",score:80},
+{name:"Stokeine",country:"Canada",score:75},
+{name:"Charles",country:"Colombie",score:86},
+{name:"Min2002",country:"Corée du Sud",score:87},
+{name:"Sky",country:"Croatie",score:86},
+{name:"Hefest",country:"Croatie",score:85},
+{name:"Tekky",country:"Croatie",score:85},
+{name:"Razii",country:"Croatie",score:82},
+{name:"Fredwolf",country:"Danemark",score:88},
+{name:"Solivagantz",country:"Danemark",score:87},
+{name:"Dunste",country:"Danemark",score:83},
+{name:"Nikolech",country:"Danemark",score:81},
+{name:"Woop",country:"Danemark",score:81},
+{name:"Jakeray",country:"Danemark",score:80},
+{name:"Steg",country:"Écosse",score:78},
+{name:"Javiflyer",country:"Espagne",score:88},
+{name:"Nauu",country:"Espagne",score:86},
+{name:"Lokogz",country:"Espagne",score:85},
+{name:"Yeims",country:"Espagne",score:85},
+{name:"Lnko",country:"Espagne",score:82},
+{name:"Sandder",country:"Estonie",score:84},
+{name:"Kakne",country:"États-Unis",score:87},
+{name:"Sophie Ice",country:"États-Unis",score:86},
+{name:"Shieldbandit",country:"États-Unis",score:84},
+{name:"Authortime",country:"États-Unis",score:83},
+{name:"Nixotica",country:"États-Unis",score:83},
+{name:"Novastxr",country:"États-Unis",score:83},
+{name:"Skifreak",country:"États-Unis",score:81},
+{name:"Catcurlyfries",country:"États-Unis",score:80},
+{name:"Neal",country:"États-Unis",score:80},
+{name:"F6_T",country:"États-Unis",score:60},
+{name:"Simo900",country:"Finlande",score:87},
+{name:"Cptsalmon",country:"Finlande",score:85},
+{name:"Miquatro",country:"Finlande",score:85},
+{name:"Bren",country:"France",score:94},
+{name:"Otaaaq",country:"France",score:93},
+{name:"Gwen",country:"France",score:92},
+{name:"Jojo Le Pro",country:"France",score:92},
+{name:"Aurel",country:"France",score:91},
+{name:"Binks",country:"France",score:91},
+{name:"Touf",country:"France",score:90},
+{name:"Cap",country:"France",score:89},
+{name:"Mage Fromage",country:"France",score:89},
+{name:"Papou",country:"France",score:89},
+{name:"Wosile",country:"France",score:89},
+{name:"Ender",country:"France",score:88},
+{name:"Morovach",country:"France",score:88},
+{name:"Nayko",country:"France",score:88},
+{name:"Neko",country:"France",score:88},
+{name:"Shcr",country:"France",score:88},
+{name:"Cocow",country:"France",score:87},
+{name:"Feed",country:"France",score:87},
+{name:"Link",country:"France",score:87},
+{name:"Rotrex",country:"France",score:87},
+{name:"Sebi",country:"France",score:87},
+{name:"Supercarlouf",country:"France",score:87},
+{name:"Loupphok",country:"France",score:87},
+{name:"Zypher",country:"France",score:87},
+{name:"Vortex",country:"France",score:86},
+{name:"Cruzial",country:"France",score:86},
+{name:"Kerberos",country:"France",score:86},
+{name:"Richie",country:"France",score:86},
+{name:"Roquett",country:"France",score:86},
+{name:"Scarpurp",country:"France",score:86},
+{name:"Viiper",country:"France",score:86},
+{name:"Worker",country:"France",score:86},
+{name:"Yashabad",country:"France",score:86},
+{name:"Vortax",country:"France",score:86},
+{name:"Chamow",country:"France",score:85},
+{name:"Haedra",country:"France",score:85},
+{name:"Ice",country:"France",score:85},
+{name:"Insanity",country:"France",score:85},
+{name:"Lyker",country:"France",score:85},
+{name:"Mimojr",country:"France",score:85},
+{name:"Nabla",country:"France",score:85},
+{name:"Navi",country:"France",score:85},
+{name:"Omnipotz",country:"France",score:85},
+{name:"Vrinho",country:"France",score:85},
+{name:"Ynos",country:"France",score:85},
+{name:"Acide",country:"France",score:84},
+{name:"Artisse",country:"France",score:84},
+{name:"Bandj",country:"France",score:84},
+{name:"Brandom",country:"France",score:84},
+{name:"Broly",country:"France",score:84},
+{name:"Dam",country:"France",score:84},
+{name:"Dionysos",country:"France",score:84},
+{name:"Glast",country:"France",score:84},
+{name:"Holo",country:"France",score:84},
+{name:"Legu",country:"France",score:84},
+{name:"Novu",country:"France",score:84},
+{name:"Roa",country:"France",score:84},
+{name:"Sheinimi",country:"France",score:84},
+{name:"Tacos",country:"France",score:84},
+{name:"Tona",country:"France",score:84},
+{name:"Xerar",country:"France",score:84},
+{name:"Yoyo",country:"France",score:84},
+{name:"Tunixx",country:"France",score:84},
+{name:"Quentin43",country:"France",score:84},
+{name:"7Ven",country:"France",score:83},
+{name:"Alfadream",country:"France",score:83},
+{name:"Badlulu",country:"France",score:83},
+{name:"Dazzle",country:"France",score:83},
+{name:"Hergam",country:"France",score:83},
+{name:"Hugo220",country:"France",score:83},
+{name:"Joymilo",country:"France",score:83},
+{name:"Jurix",country:"France",score:83},
+{name:"Micka",country:"France",score:83},
+{name:"Monkey",country:"France",score:83},
+{name:"Neziium",country:"France",score:83},
+{name:"Plombz",country:"France",score:83},
+{name:"Ryuhax",country:"France",score:83},
+{name:"Samz",country:"France",score:83},
+{name:"Sapi",country:"France",score:83},
+{name:"Shadenis",country:"France",score:83},
+{name:"Siqaa",country:"France",score:83},
+{name:"Sly",country:"France",score:83},
+{name:"Speedself",country:"France",score:83},
+{name:"Thomas Jean",country:"France",score:83},
+{name:"Tjalic",country:"France",score:83},
+{name:"Wiilox",country:"France",score:83},
+{name:"Xiro",country:"France",score:83},
+{name:"Goldy",country:"France",score:83},
+{name:"Anige",country:"France",score:82},
+{name:"Atalata",country:"France",score:82},
+{name:"Aynyx",country:"France",score:82},
+{name:"Fatinho",country:"France",score:82},
+{name:"Mattouzz",country:"France",score:82},
+{name:"Melioo",country:"France",score:82},
+{name:"Mericle",country:"France",score:82},
+{name:"Oxid",country:"France",score:82},
+{name:"Rin",country:"France",score:82},
+{name:"Salty",country:"France",score:82},
+{name:"Sheinex",country:"France",score:82},
+{name:"Shpluck",country:"France",score:82},
+{name:"Skuen",country:"France",score:82},
+{name:"Toxiko",country:"France",score:82},
+{name:"Vulnerra",country:"France",score:82},
+{name:"Wazyx",country:"France",score:82},
+{name:"Wingobear",country:"France",score:82},
+{name:"Xertox",country:"France",score:82},
+{name:"Zenyy",country:"France",score:82},
+{name:"Degstm",country:"France",score:82},
+{name:"Bolet",country:"France",score:82},
+{name:"Ayako",country:"France",score:81},
+{name:"Dam Pouleto",country:"France",score:81},
+{name:"Dark62",country:"France",score:81},
+{name:"Doyle",country:"France",score:81},
+{name:"Fenrir",country:"France",score:81},
+{name:"Holfreak",country:"France",score:81},
+{name:"Jean René",country:"France",score:81},
+{name:"Maxtrack",country:"France",score:81},
+{name:"Micmo",country:"France",score:81},
+{name:"Nekojim",country:"France",score:81},
+{name:"Ringoa",country:"France",score:81},
+{name:"Snow",country:"France",score:81},
+{name:"Supernowa",country:"France",score:81},
+{name:"Taak",country:"France",score:81},
+{name:"Thedarkwix",country:"France",score:81},
+{name:"Utaa",country:"France",score:81},
+{name:"Wawa",country:"France",score:81},
+{name:"Bubulles",country:"France",score:81},
+{name:"Bmx",country:"France",score:80},
+{name:"Choum",country:"France",score:80},
+{name:"Clm",country:"France",score:80},
+{name:"Dydy",country:"France",score:80},
+{name:"Fontur",country:"France",score:80},
+{name:"Ggeek",country:"France",score:80},
+{name:"Headmasterkill",country:"France",score:80},
+{name:"Kakkou",country:"France",score:80},
+{name:"Kama",country:"France",score:80},
+{name:"Karma",country:"France",score:80},
+{name:"Korch",country:"France",score:80},
+{name:"Lukario",country:"France",score:80},
+{name:"Mariogalaxy",country:"France",score:80},
+{name:"Nath",country:"France",score:80},
+{name:"Niko",country:"France",score:80},
+{name:"Nrgz",country:"France",score:80},
+{name:"Opale",country:"France",score:80},
+{name:"Roquete",country:"France",score:80},
+{name:"Sabz",country:"France",score:80},
+{name:"Sam",country:"France",score:80},
+{name:"Skydruw",country:"France",score:80},
+{name:"Snatix",country:"France",score:80},
+{name:"Tankrom",country:"France",score:80},
+{name:"Tommy",country:"France",score:80},
+{name:"Trikz",country:"France",score:80},
+{name:"Viinch",country:"France",score:80},
+{name:"Ujimaa",country:"France",score:80},
+{name:"Walegen",country:"France",score:80},
+{name:"Airwam",country:"France",score:79},
+{name:"Coz",country:"France",score:79},
+{name:"Darker",country:"France",score:79},
+{name:"Fayeur",country:"France",score:79},
+{name:"Heav",country:"France",score:88},
+{name:"Jingatak",country:"France",score:79},
+{name:"Lattack",country:"France",score:79},
+{name:"Mixmod",country:"France",score:79},
+{name:"Nitrofeint",country:"France",score:79},
+{name:"Warl",country:"France",score:79},
+{name:"Iesauka",country:"France",score:79},
+{name:"Sympthome",country:"France",score:79},
+{name:"Auwrah",country:"France",score:78},
+{name:"Flow",country:"France",score:78},
+{name:"Gold",country:"France",score:78},
+{name:"Jam",country:"France",score:78},
+{name:"Qiraj",country:"France",score:78},
+{name:"Telnei",country:"France",score:78},
+{name:"Troulet",country:"France",score:78},
+{name:"Viilom",country:"France",score:78},
+{name:"Azion",country:"France",score:76},
+{name:"Noby",country:"France",score:76},
+{name:"Astalet",country:"France",score:76},
+{name:"Chayann",country:"France",score:75},
+{name:"Ciremyxx",country:"France",score:75},
+{name:"Elix'Ir",country:"France",score:75},
+{name:"Heathcliff",country:"France",score:75},
+{name:"Helzinka",country:"France",score:75},
+{name:"Lueces",country:"France",score:75},
+{name:"Velom",country:"France",score:75},
+{name:"Nicsoby",country:"France",score:74},
+{name:"Slowpiou",country:"France",score:74},
+{name:"Tunder",country:"France",score:74},
+{name:"Zerator",country:"France",score:74},
+{name:"Rh3Torique",country:"France",score:73},
+{name:"Senjojoveler",country:"France",score:73},
+{name:"Bayron",country:"France",score:72},
+{name:"Teckso",country:"France",score:72},
+{name:"Tseko",country:"France",score:72},
+{name:"Virtuoz",country:"France",score:72},
+{name:"Yeager",country:"France",score:72},
+{name:"Yeus",country:"France",score:72},
+{name:"Baanz",country:"France",score:71},
+{name:"Blackdream",country:"France",score:71},
+{name:"Frizz",country:"France",score:71},
+{name:"Obito",country:"France",score:71},
+{name:"Sawki",country:"France",score:71},
+{name:"Dantafass",country:"France",score:70},
+{name:"Lulub",country:"France",score:70},
+{name:"Moutronis",country:"France",score:70},
+{name:"Nicob",country:"France",score:70},
+{name:"Tomote",country:"France",score:70},
+{name:"Toppen",country:"France",score:70},
+{name:"Vevolution",country:"France",score:70},
+{name:"Nitralis",country:"France",score:70},
+{name:"Belette",country:"France",score:69},
+{name:"Emilien",country:"France",score:69},
+{name:"Chbidou",country:"France",score:68},
+{name:"Dagos",country:"France",score:68},
+{name:"Salamanka",country:"France",score:68},
+{name:"Kuumba",country:"France",score:68},
+{name:"Pépite",country:"France",score:67},
+{name:"Polycopy",country:"France",score:67},
+{name:"Selrahc",country:"France",score:66},
+{name:"Koble",country:"France",score:65},
+{name:"Killzerax",country:"France",score:64},
+{name:"Orge",country:"France",score:64},
+{name:"Paulo",country:"France",score:64},
+{name:"Bimob",country:"France",score:63},
+{name:"Kamikalsh",country:"France",score:63},
+{name:"Alancommeunaigle",country:"France",score:62},
+{name:"Chtiwid",country:"France",score:62},
+{name:"Hartonaf",country:"France",score:62},
+{name:"Ludow",country:"France",score:61},
+{name:"Lepaing",country:"France",score:78},
+{name:"Joker",country:"France",score:59},
+{name:"Savaty",country:"France",score:53},
+{name:"Cacacup",country:"France",score:49},
+{name:"Aimant",country:"France",score:48},
+{name:"Kann",country:"France",score:40},
+{name:"Tylerzz",country:"France",score:37},
+{name:"Sardoche",country:"France",score:16},
+{name:"Kilou",country:"France",score:14},
+{name:"Twisto",country:"France",score:11},
+{name:"Palmitos",country:"Haïti",score:72},
+{name:"Pusztitopako",country:"Hongrie",score:90},
+{name:"Blood",country:"Hongrie",score:82},
+{name:"Nottcurious",country:"Inde",score:84},
+{name:"Iridium",country:"Inde",score:82},
+{name:"Spark",country:"Inde",score:80},
+{name:"Babzify",country:"Irlande",score:85},
+{name:"Toto",country:"Islande",score:81},
+{name:"Dubby",country:"Italie",score:84},
+{name:"Iprime",country:"Italie",score:84},
+{name:"Auris",country:"Italie",score:82},
+{name:"Gladavicom",country:"Italie",score:82},
+{name:"Bluejinx",country:"Italie",score:81},
+{name:"Loumar",country:"Italie",score:81},
+{name:"Matp",country:"Italie",score:81},
+{name:"Shadow",country:"Italie",score:80},
+{name:"Mellowja",country:"Jamaïque",score:80},
+{name:"Quete",country:"Kiribati",score:90},
+{name:"Nastibe",country:"Laos",score:69},
+{name:"Karlukki",country:"Lettonie",score:80},
+{name:"Srk",country:"Lettonie",score:71},
+{name:"Bits",country:"Lituanie",score:86},
+{name:"Ziren",country:"Lituanie",score:85},
+{name:"Kem",country:"Lituanie",score:84},
+{name:"Morhpeo",country:"Luxembourg",score:83},
+{name:"Jaja",country:"Maroc",score:82},
+{name:"Macroblokos",country:"Mexique",score:90},
+{name:"Nikshar",country:"Mongolie",score:70},
+{name:"Bergie",country:"Norvège",score:89},
+{name:"Levonn",country:"Norvège",score:89},
+{name:"Intax",country:"Norvège",score:87},
+{name:"Andy",country:"Norvège",score:86},
+{name:"Cinxsss",country:"Norvège",score:86},
+{name:"Erizel",country:"Norvège",score:86},
+{name:"Catbagasm",country:"Norvège",score:84},
+{name:"Andybaguette",country:"Norvège",score:83},
+{name:"Keffin",country:"Norvège",score:81},
+{name:"Kvikk",country:"Norvège",score:75},
+{name:"Majijej",country:"Norvège",score:69},
+{name:"Papetvaudois",country:"Norvège",score:61},
+{name:"Wirtual",country:"Norvège",score:34},
+{name:"Baiwack",country:"Nouvelle-Zélande",score:88},
+{name:"Jswag",country:"Nouvelle-Zélande",score:85},
+{name:"Mentoz",country:"Panama",score:78},
+{name:"Denniss",country:"Pays-Bas",score:89},
+{name:"Spammiej",country:"Pays-Bas",score:89},
+{name:"Complex",country:"Pays-Bas",score:88},
+{name:"Koenz",country:"Pays-Bas",score:88},
+{name:"Darkestsentinel",country:"Pays-Bas",score:87},
+{name:"Jan",country:"Pays-Bas",score:87},
+{name:"Tarpor",country:"Pays-Bas",score:87},
+{name:"Vixxa",country:"Pays-Bas",score:87},
+{name:"Xenogear",country:"Pays-Bas",score:87},
+{name:"Javzo",country:"Pays-Bas",score:86},
+{name:"Paardenvechter",country:"Pays-Bas",score:85},
+{name:"Alex W",country:"Pays-Bas",score:84},
+{name:"Marijntje",country:"Pays-Bas",score:84},
+{name:"Poepboer",country:"Pays-Bas",score:84},
+{name:"Stufts",country:"Pays-Bas",score:84},
+{name:"Astronaut",country:"Pays-Bas",score:82},
+{name:"Henkisme",country:"Pays-Bas",score:81},
+{name:"Knyntsje",country:"Pays-Bas",score:80},
+{name:"Mitra",country:"Pays-Bas",score:80},
+{name:"Pug",country:"Pays-Bas",score:80},
+{name:"Timmys",country:"Pays-Bas",score:80},
+{name:"Zeemuis",country:"Pays-Bas",score:80},
+{name:"Jolypop",country:"Pays-Bas",score:77},
+{name:"Jussy",country:"Pays-Bas",score:76},
+{name:"Lumar",country:"Pays-Bas",score:74},
+{name:"Acrose",country:"Pays de Galles",score:89},
+{name:"Hendo",country:"Pays de Galles",score:82},
+{name:"Mime",country:"Pologne",score:92},
+{name:"Evon",country:"Pologne",score:88},
+{name:"Neon",country:"Pologne",score:88},
+{name:"Key",country:"Pologne",score:87},
+{name:"Magorian",country:"Pologne",score:86},
+{name:"Korniee",country:"Pologne",score:85},
+{name:"Plastorex",country:"Pologne",score:84},
+{name:"Demotivator",country:"Pologne",score:83},
+{name:"Nalax",country:"Pologne",score:81},
+{name:"Nothing",country:"Pologne",score:81},
+{name:"Rotaker",country:"Pologne",score:80},
+{name:"Moriah",country:"Portugal",score:88},
+{name:"Mawi",country:"Portugal",score:86},
+{name:"Maniaaaac",country:"Portugal",score:85},
+{name:"Default",country:"Portugal",score:84},
+{name:"Paull",country:"Portugal",score:83},
+{name:"Nevermind",country:"Roumanie",score:85},
+{name:"Sqlc",country:"Russie",score:89},
+{name:"Na1Ve",country:"Russie",score:88},
+{name:"Neuro",country:"Russie",score:87},
+{name:"Norbinarus",country:"Russie",score:84},
+{name:"Nitech",country:"Russie",score:82},
+{name:"Leaf",country:"Russie",score:81},
+{name:"Walten",country:"Russie",score:71},
+{name:"Loso",country:"Slovaquie",score:89},
+{name:"Tween",country:"Slovaquie",score:88},
+{name:"Zimzalabiim",country:"Slovaquie",score:85},
+{name:"Jaakaah",country:"Slovénie",score:86},
+{name:"Mantaaa",country:"Slovénie",score:80},
+{name:"Phoebe",country:"Suède",score:92},
+{name:"Jozo",country:"Suède",score:89},
+{name:"Karjen",country:"Suède",score:89},
+{name:"Frostbeule",country:"Suède",score:88},
+{name:"Brinkenn",country:"Suède",score:87},
+{name:"Keby",country:"Suède",score:86},
+{name:"Kopro",country:"Suède",score:85},
+{name:"Molle",country:"Suède",score:85},
+{name:"Susuwi",country:"Suède",score:83},
+{name:"Iihugo",country:"Suède",score:82},
+{name:"Willeknas",country:"Suède",score:79},
+{name:"Henkan",country:"Suède",score:72},
+{name:"Affi",country:"Suisse",score:90},
+{name:"Yannex",country:"Suisse",score:87},
+{name:"Siroze",country:"Suisse",score:84},
+{name:"Ikewolf",country:"Suisse",score:83},
+{name:"Neodym",country:"Suisse",score:82},
+{name:"Jitsky",country:"Suisse",score:80},
+{name:"Kezskia",country:"Suisse",score:76},
+{name:"Banano",country:"Suisse",score:74},
+{name:"Xstrab",country:"Suisse",score:70},
+{name:"Rag",country:"Suisse",score:64},
+{name:"Hakkijunior",country:"Tchéquie",score:88},
+{name:"Kappa",country:"Tchéquie",score:86},
+{name:"Elconn",country:"Tchéquie",score:93},
+{name:"Huba Bibi",country:"Turquie",score:86},
+{name:"Ignite",country:"Turquie",score:86},
+{name:"Huso",country:"Turquie",score:85},
+{name:"Birdie",country:"Turquie",score:83},
+{name:"Cemko",country:"Turquie",score:82},
+{name:"Rook1E",country:"Uruguay",score:81},
+{name:"Natuss_Gluten",country:"Yémen",score:91},
+{name:"Chacalou",country:"Yémen",score:74},
+{name:"Zentrian",country:"Suède",score:87},
+{name:"Crxly",country:"Canada",score:82},
+{name:"Aapril",country:"France",score:80},
+{name:"Drole2Con",country:"France",score:81},
+{name:"Rozu",country:"Allemagne",score:84},
+{name:"Shengar",country:"Tchéquie",score:82},
+{name:"Rango",country:"Irlande",score:75},
+{name:"Bogwarrior9",country:"Irlande",score:84},
+{name:"TheRenoFella",country:"Irlande",score:82},
+{name:"Derolt",country:"Brésil",score:84},
+{name:"Ragnarinho",country:"Turquie",score:80},
+{name:"Vingummi101",country:"Danemark",score:83},
+{name:"Sharkyn",country:"Tchéquie",score:81},
+{name:"Shcr",country:"France",score:88},
+{name:"Poker",country:"Autriche",score:86},
+{name:"Xertzy",country:"Belgique",score:85},
+{name:"Liquid",country:"Croatie",score:85},
+{name:"Mertzjr",country:"Danemark",score:82},
+{name:"Radiance",country:"Danemark",score:84},
+{name:"Insane",country:"Finlande",score:86},
+{name:"Tuduttuduu",country:"Finlande",score:84},
+{name:"Tmdisk",country:"Allemagne",score:86},
+{name:"Chucky",country:"France",score:65},
+{name:"Trilisk",country:"France",score:81},
+{name:"Shorty Gray",country:"Slovaquie",score:84}
+
+
+  // 👉 tu peux laisser TOUTE ta liste complète ici, rien d’autre à changer
+];
+
+let filteredPlayers = [...players];
+let currentSort = {key:null, asc:true};
+
+function render(){
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
+
+  filteredPlayers.forEach((p, index) => {
+    tbody.innerHTML += `
+      <tr>
+        <td class="note">${index + 1}</td>
+        <td>${p.name}</td>
+        <td class="note">${p.score}</td>
+        <td>${p.country}</td>
+      </tr>`;
+  });
+}
+
+function sortTable(key){
+  if(currentSort.key === key){
+    currentSort.asc = !currentSort.asc;
+  } else {
+    currentSort.key = key;
+    currentSort.asc = true;
+  }
+
+  filteredPlayers.sort((a,b)=>{
+    if(a[key] < b[key]) return currentSort.asc ? -1 : 1;
+    if(a[key] > b[key]) return currentSort.asc ? 1 : -1;
+    return 0;
+  });
+
+  render();
+}
+
+function filterPlayers(){
+  const q = document.getElementById("searchInput").value.toLowerCase();
+
+  filteredPlayers = players.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.country.toLowerCase().includes(q) ||
+    String(p.score).includes(q)
+  );
+
+  render();
+}
+
+players.sort((a,b)=>b.score - a.score);
+filteredPlayers = [...players];
+render();
+</script>
+
+</body>
+</html>

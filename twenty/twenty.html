@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>⏱️ Twenty</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  min-height:100vh;
+  background:url("background.jpeg") center/cover no-repeat fixed;
+  color:#fff;
+}
+
+html{
+  scrollbar-gutter: stable;
+}
+
+body{
+  overflow-y: scroll;
+}
+
+.overlay{
+  min-height:100vh;
+  background:rgba(0,0,0,.7);
+}
+
+/* NAVBAR */
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+nav button{
+  background:none;border:none;color:#fff;
+  font-size:32px;cursor:pointer;padding:15px 14px;
+}
+nav button:hover{color:#c084fc}
+
+/* MAIN */
+main{
+  padding:80px 20px;
+  max-width:1400px;
+  margin:auto;
+}
+
+h1{
+  text-align:center;
+  font-size:48px;
+  margin-bottom:30px;
+}
+
+/* SEARCH */
+.search{
+  display:flex;
+  justify-content:center;
+  margin-bottom:25px;
+}
+.search input{
+  padding:12px 16px;
+  border-radius:12px;
+  border:none;
+  min-width:280px;
+  font-size:16px;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:rgba(0,0,0,.55);
+  border-radius:16px;
+  overflow:hidden;
+}
+
+th,td{
+  padding:12px;
+  text-align:center;
+}
+
+th{
+  background:#b38b00;
+  font-size:16px;
+  cursor:pointer;
+  user-select:none;
+}
+
+th.sortable:hover{
+  background:#5c54d6;
+}
+
+tr:nth-child(even){
+  background:rgba(255,255,255,.05);
+}
+
+tr:hover{
+  background:rgba(192,132,252,.15);
+}
+
+.player{
+  text-align:left;
+  font-weight:900;
+}
+
+footer{
+  text-align:center;
+  padding:15px;
+  opacity:.5;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<nav>
+<button type="button" onclick="window.location.href='../index.html'">Home</button>
+<button type="button" onclick="window.location.href='../prog/prog.html'">Schedule</button>
+<button type="button" onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
+<button type="button" onclick="window.location.href='twenty.html'">Twenty</button> 
+<button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
+<button type="button" onclick="window.location.href='../pack/pack.html'">TM Pack</button>
+<button type="button" onclick="window.location.href='../maps/maps.html'">My Maps</button>
+<button type="button" onclick="window.location.href='../mapping/minuteur.html'">Mapping</button>
+</nav>
+
+
+
+<main>
+<h1>⏱️ Leaderboard</h1>
+
+<div class="search">
+  <input type="text" placeholder="🔍 Search player..." oninput="filterPlayers(this.value)">
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Joueur</th>
+      <th class="sortable" onclick="sortBy('t1')">Wins</th>
+      <th class="sortable" onclick="sortBy('t2')">Top 2</th>
+      <th class="sortable" onclick="sortBy('t3')">Top 3</th>
+      <th class="sortable" onclick="sortBy('t4')">Top 4</th>
+      <th class="sortable" onclick="sortBy('total')">Total</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</main>
+
+<footer>Chacalou.com ©</footer>
+</div>
+
+<script>
+/* =========================
+   🔥 COLLE TON TEXTE ICI
+========================= */
+const RAW_DATA = `
+Joueur	Top 1	Top 2	Top 3	Top 4		Total
+						
+Iesauka	17	11	17	10	0	55
+Marius	9	3	3	5	0	20
+Dazzle	7	6	6	2	0	21
+Chacalou	7	5	16	12	0	40
+Bvddy	5	5	1	5	0	16
+Dark62	6	6	1	0	0	13
+Bolet	4	7	8	9	0	28
+Fatinho	3	5	2	4	0	14
+Ynos	3	7	6	3	0	19
+Emilianah	2	3	2	3	0	10
+Sebeqeq	2	1	2	3	0	8
+Viiper	2	0	0	1	0	3
+Jaja	2	5	2	2	0	11
+Coolhat	1	0	2	1	0	4
+Vomfiten	1	1	0	0	0	2
+Leones	1	2	0	0	0	3
+Gofeti	1	0	1	0	0	2
+Fontur	1	2	2	2	0	7
+TheNinjaHobo	1	0	0	0	0	1
+Marshallize	1	0	0	0	0	1
+Emilien	1	0	0	0	0	1
+ItzYouri	1	0	0	0	0	1
+Speny3377	1	0	0	0	0	1
+Plink	1	0	0	0	0	1
+Trilisk	1	0	0	0	0	1
+Delete	1	0	0	0	0	1
+Jeddack	1	1	0	1	0	3
+Lanztmu	1	0	0	0	0	1
+Ekay	1	1	0	0	0	2
+Ice	1	0	1	0	0	2
+Kamikalash	1	0	0	0	0	1
+ApocalypsePony	0	3	2	3	0	8
+Drole2con	0	1	1	1	0	3
+Teckso	0	0	1	0	0	1
+Chayann	0	0	2	0	0	2
+Rompeskjegg	0	1	0	0	0	1
+AtlasSlayer	0	0	1	0	0	1
+Cheeseismeat	0	1	0	0	0	1
+Shaunthesheep	0	0	1	0	0	1
+Kopatych	0	1	0	0	0	1
+Nitech	0	0	0	1	0	1
+Ikleinduimpie	0	0	1	0	0	1
+Ben303a	0	1	0	0	0	1
+Denniss	0	0	0	1	0	1
+Mericle	0	0	0	1	0	1
+Tekky	0	1	0	0	0	1
+Auwrah	0	0	1	0	0	1
+Wirtual	0	0	1	0	0	1
+Flow	0	3	2	2	0	7
+Chamow	0	1	0	0	0	1
+Hagn	0	0	0	2	0	2
+Proffeuillage	0	0	1	0	0	1
+Karmv	0	0	0	2	0	2
+G4unightstreick	0	1	0	0	0	1
+Tomote	0	0	0	1	0	1
+Undier	0	1	0	0	0	1
+Gladavicom	0	1	0	0	0	1
+Kaii	0	0	0	1	0	1
+Doyle	0	0	0	1	0	1
+Aluji	0	0	0	1	0	1
+Rom1	0	0	0	1	0	1
+AciasStorm	0	1	0	0	0	1
+LuckersTurbo	0	0	0	1	0	1
+Jam	1	0	0	0	0	1
+Kama	1	0	0	1	0	2
+Noby	0	0	1	0	0	1
+Lyker	0	0	0	1	0	1
+Sheinex	0	0	0	1	0	1
+Choufleur	1	0	0	0	0	1
+Phenixo	0	1	0	0	0	1
+Mery	1	0	0	0	0	1
+Windho	0	0	1	0	0	1
+`;
+
+/* ========================= */
+
+let players = [];
+let currentList = [];
+
+function parseRawData(){
+  const lines = RAW_DATA.trim().split("\n").slice(1);
+  players = [];
+
+  lines.forEach(line=>{
+    const c = line.split(/\t+/).map(v=>v.trim());
+    if(!c[0]) return;
+
+    players.push({
+      name: c[0],
+      t1: parseInt(c[1]) || 0,
+      t2: parseInt(c[2]) || 0,
+      t3: parseInt(c[3]) || 0,
+      t4: parseInt(c[4]) || 0,
+      total: parseInt(c[6]) || 0,
+      rank: 0
+    });
+  });
+
+  sortBy("t1", true);
+}
+
+function sortBy(key, initial=false){
+  currentList = [...players].sort((a,b)=>{
+    if(b[key] !== a[key]) return b[key] - a[key];
+    return b.total - a.total;
+  });
+
+  currentList.forEach((p,i)=>p.rank = i + 1);
+  render(currentList);
+}
+
+function render(list){
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  list.forEach(p=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.rank}</td>
+        <td class="player">${p.name}</td>
+        <td>${p.t1}</td>
+        <td>${p.t2}</td>
+        <td>${p.t3}</td>
+        <td>${p.t4}</td>
+        <td><b>${p.total}</b></td>
+      </tr>
+    `;
+  });
+}
+
+function filterPlayers(q){
+  q = q.toLowerCase();
+  render(currentList.filter(p=>p.name.toLowerCase().includes(q)));
+}
+
+document.addEventListener("DOMContentLoaded", parseRawData);
+</script>
+
+</body>
+</html>

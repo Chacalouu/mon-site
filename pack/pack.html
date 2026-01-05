@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🎁 TM PACK</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  min-height:100vh;
+  background:url("../background.jpeg") center/cover no-repeat fixed;
+  color:#fff;
+}
+
+.overlay{
+  min-height:100vh;
+  background:rgba(0,0,0,.65);
+  padding-bottom:70px;
+}
+
+/* ===== MENU ===== */
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+  position:sticky;
+  top:0;
+  z-index:50;
+}
+
+nav button{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:32px;
+  font-weight:normal;
+  cursor:pointer;
+  padding:15px 14px;
+}
+
+nav button:hover{ color:#c084fc; }
+
+/* ===== PACK ===== */
+.pack-wrap{
+  max-width:1200px;
+  margin:35px auto;
+  padding:0 16px;
+  text-align:center;
+}
+
+.pack-wrap h1{
+  font-size:42px;
+  margin-bottom:15px;
+}
+
+#openPack{
+  padding:24px 48px;
+  font-size:25px;
+  border:none;
+  border-radius:12px;
+  background: linear-gradient(145deg,#8b5cf6,#7c3aed);
+  color:#fff;
+  cursor:pointer;
+}
+
+#openPack:hover{ filter:brightness(1.08); }
+#openPack:disabled{ opacity:.55; cursor:not-allowed; }
+
+#remaining{
+  margin-top:8px;
+  opacity:.99;
+  font-size:25px;
+}
+
+/* ===== ANIMATION ===== */
+#animation{
+  display:none;
+  margin:26px auto 0;
+}
+
+.loader{
+  width:95px;
+  height:95px;
+  border-radius:50%;
+  border:6px solid rgba(255,255,255,.18);
+  border-top:6px solid #a855f7;
+  animation:spin 1s linear infinite;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto;
+  font-size:28px;
+  font-weight:bold;
+}
+
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* ===== RESULT (NO EFFECTS) ===== */
+#result{
+  margin-top:22px;
+  min-height:280px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#result img{
+  width:260px;
+  max-width:70vw;
+  border-radius:0;
+  box-shadow:none;
+}
+
+/* ===== INVENTORY ===== */
+.inventory{
+  max-width:1300px;
+  margin:35px auto 0;
+  padding:0 16px;
+  text-align:center;
+}
+
+.inventory h2{
+  margin-bottom:6px;
+  font-size:30px;
+}
+
+#progress{
+  opacity:.85;
+  margin-bottom:14px;
+  font-size:30px;
+}
+
+#search{
+  margin-bottom:30px;
+  padding:10px 14px;
+  width:200px;
+  max-width:90%;
+  border-radius:10px;
+  border:none;
+  outline:none;
+  font-size:14px;
+}
+
+.inventory-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(88px, 1fr));
+  gap:12px;
+}
+
+.inventory-grid img{
+  width:100%;
+  border-radius:10px;
+  opacity:.3;
+  transition:.2s;
+  cursor:pointer;
+  background:rgba(255,255,255,.06);
+}
+
+.inventory-grid img.owned{ opacity:1; }
+.inventory-grid img:hover{ transform:scale(1.06); }
+
+/* ===== CARD PREVIEW ===== */
+#cardPreview{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+}
+
+#cardPreview img{
+  max-width:90%;
+  max-height:90%;
+}
+
+/* ===== DAILY RECAP ===== */
+#dailyRecap{
+  display:none;
+  text-align:center;
+  margin:20px auto 0;
+  padding:0 16px;
+}
+
+#recapCanvas{
+  width:min(700px, 92vw);
+  height:auto;
+  cursor:pointer;
+  border-radius:14px;
+}
+
+#copyToast{
+  margin-top:12px;
+  opacity:0;
+  transition:.25s;
+  font-size:16px;
+  color:#a855f7;
+}
+
+#showLeaderboard{
+  padding:14px 28px;
+  font-size:18px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(145deg,#22d3ee,#0ea5e9);
+  color:#fff;
+  cursor:pointer;
+}
+
+#showLeaderboard:hover{
+  filter:brightness(1.1);
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  position:fixed;
+  bottom:12px;
+  width:100%;
+  text-align:center;
+  font-size:14px;
+  opacity:0.6;
+  pointer-events:none;
+}
+
+/* ===== INFOS BUTTON ===== */
+#infoBtn{
+  position:fixed;
+  top:120px;
+  right:50px;
+  z-index:200;
+  padding:10px 18px;
+  font-size:30px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(145deg,#f472b6,#ec4899);
+  color:#fff;
+  cursor:pointer;
+}
+
+#infoBtn:hover{
+  filter:brightness(1.1);
+}
+
+/* ===== INFOS MODAL ===== */
+#infoModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  z-index:10000;
+  align-items:center;
+  justify-content:center;
+}
+
+.info-box{
+  background:#0b0615;
+  border-radius:18px;
+  max-width:720px;
+  width:90%;
+  padding:32px;
+  text-align:center;
+  position:relative;
+}
+
+.info-box h2{
+  margin-bottom:14px;
+  font-size:28px;
+  color:#ec4899;
+}
+
+.info-box p{
+  font-size:18px;
+  line-height:1.5;
+  opacity:.95;
+}
+
+/* close button */
+#closeInfo{
+  position:absolute;
+  top:14px;
+  right:16px;
+  font-size:28px;
+  background:none;
+  border:none;
+  color:#fff;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<!-- MENU -->
+<nav>
+  <button type="button" onclick="window.location.href='../index.html'">Home</button>
+  <button type="button" onclick="window.location.href='../prog/prog.html'">Schedule</button>
+  <button type="button" onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
+  <button type="button" onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
+  <button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
+  <button type="button" onclick="window.location.href='pack.html'">TM Pack</button>
+  <button type="button" onclick="window.location.href='../maps/maps.html'">My Maps</button>
+  <button type="button" onclick="window.location.href='../mapping/minuteur.html'">Mapping</button>
+</nav>
+
+<button id="infoBtn">Infos</button>
+
+<div id="infoModal">
+  <div class="info-box">
+    <button id="closeInfo">✕</button>
+
+    <h2>Infos</h2>
+
+    <p><strong>Welcome to TMPACK, and thanks for being here!</strong></p>
+
+    <p>
+      <strong>TMPACK</strong> is a brand-new concept created for the <strong>Trackmania community</strong>, 
+      fully imagined and built from scratch by <strong>Chacalou</strong> — including the design, cards, ratings, 
+      and all visuals.
+    </p>
+
+    <p>
+      I had <strong>no coding experience at first</strong>, so I started using a few tools to help me out, 
+      and along the way, I learned how to code by myself.
+    </p>
+
+    <p>
+      <strong>Every day, you can open 5 packs!</strong><br>
+      Try to pack the best Trackmania players, your friends… or even yourself 😄<br>
+      If you want your own card, feel free to send me a <strong>DM on Discord</strong>.
+    </p>
+
+    <p>
+      → <strong>The goal is purely for fun:</strong><br>
+      Complete your collection at <strong>100%</strong>.
+    </p>
+
+    <p><strong>Special cards are linked to Trackmania events:</strong></p>
+
+    <p>
+      🔴 <strong>Red cards</strong> — Players who won <strong>5 Survivor cups or more</strong>
+      🟡 <strong>Yellow cards</strong> — Players who won <strong>10 Twenty cups or more</strong>
+      🟢 <strong>Green cards</strong> — Team <strong>Les Dégueux</strong>
+      🌟 <strong>Icon cards</strong> — Just me… because I’m the <strong>GOAT</strong> 🐐
+    </p>
+
+    <p>
+      More <strong>special cards</strong> will be added for major Trackmania competitions 
+      (for example: <strong>TMGames</strong>).
+    </p>
+
+    <p>
+      The ratings were made by <strong>myself and the community</strong>.<br>
+      Everything is meant to be taken <strong>lightly</strong> — leave your ego aside 😌<br>
+      You’ll also find a few <strong>private jokes</strong> and <strong>Easter eggs</strong> hidden here and there.
+    </p>
+
+    <p>
+      <strong>I hope you’ll enjoy the project.</strong><br>
+      See you on stream — <strong>much love 💜</strong>
+    </p>
+
+  </div>
+</div>
+
+
+<div class="pack-wrap">
+  <button id="openPack">Open</button>
+  <div id="remaining"></div>
+
+  <div id="animation">
+    <div class="loader"><span id="countdown">5</span></div>
+    <div style="margin-top:10px;opacity:.85">Opening pack...</div>
+  </div>
+
+  <div id="result"></div>
+</div>
+
+<!-- DAILY RECAP -->
+<div id="dailyRecap">
+  <canvas id="recapCanvas" width="1200" height="1200"></canvas>
+  <div id="copyToast">Image copied ✔</div>
+</div>
+
+<div class="inventory">
+<div style="margin-bottom:14px;">
+  <button id="showLeaderboard" onclick="window.location.href='tmpackldb.html'">
+    Show leaderboard
+  </button>
+</div>
+
+  <h2>This is your inventory</h2>
+  <div id="progress"></div>
+
+  <input id="search" type="text" placeholder="Search player...">
+<div style="margin-bottom:18px;">
+  <label style="cursor:pointer; font-size:16px;">
+    <input type="checkbox" id="ownedOnly" style="margin-right:8px;">
+    Show owned cards only
+  </label>
+</div>
+
+  <div class="inventory-grid" id="inventory"></div>
+</div>
+
+<footer class="footer">
+  Chacalou.com ©
+</footer>
+
+</div>
+
+<!-- CARD PREVIEW -->
+<div id="cardPreview">
+  <img id="cardPreviewImg">
+</div>
+
+<script>
+/* ========= CONFIG ========= */
+const MAX_PACKS_PER_DAY = 5;
+
+/* 🔴 PUT YOUR FULL LIST HERE */
+const PACK_IMAGES = [
+"7VEN1.png",
+"AAPRIL1.png",
+"ABADPCGAMER1.png",
+"ACIDE1.png",
+"ACROSE1.png",
+"AFFI1.png",
+"AIMANT1.png",
+"AIRWAM1.png",
+"ALANCOMMEUNAIGLE1.png",
+"ALEXW1.png",
+"ALFADREAM1.png",
+"AMATERASU1.png",
+"ANDY1.png",
+"ANDYBAGUETTE1.png",
+"ANIGE1.png",
+"AQLX1.png",
+"ARTHANIIR1.png",
+"ARTISSE1.png",
+"ASSE1.png",
+"ASTALET1.png",
+"ASTRONAUT1.png",
+"ATALATA1.png",
+"ATOME1.png",
+"AUREL1.png",
+"AURIS1.png",
+"AUTHORTIME1.png",
+"AUWRAH1.png",
+"AYAKO1.png",
+"AYNYX1.png",
+"AZION1.png",
+"BAANZ1.png",
+"BABZIFY1.png",
+"BADLULU1.png",
+"BAIWACK1.png",
+"BANANO1.png",
+"BANDJ1.png",
+"BANDJ2.png",
+"BARBOS1.png",
+"BAUPRO1.png",
+"BAYRON1.png",
+"BELETTE1.png",
+"BEPEZE1.png",
+"BERGIE1.png",
+"BETATOAST1.png",
+"BIMOB1.png",
+"BINKS1.png",
+"BIRDIE1.png",
+"BITS1.png",
+"BLACKDREAM1.png",
+"BLOOD1.png",
+"BLUEJINX1.png",
+"BMX1.png",
+"BOLET1.png",
+"BOGWARRIOR1.png",
+"BOZBEZ1.png",
+"BRANDOM1.png",
+"BREN1.png",
+"BRINKENN1.png",
+"BROLY1.png",
+"BUBULLES1.png",
+"BURNTBAGELS1.png",
+"BVDDY1.png",
+"CACACUP.png",
+"CAP1.png",
+"CARLJR1.png",
+"CATBAGASM1.png",
+"CATCURLYFRIES1.png",
+"CEMKO1.png",
+"CHACALOU1.png",
+"CHACALOU2.png",
+"CHACALOU3.png",
+"CHAMOW1.png",
+"CHARLES1.png",
+"CHAYANN1.png",
+"CHAYANN2.png",
+"CHBIDOU1.png",
+"CHOCOLOCO1.png",
+"CHOUM1.png",
+"CHROMA1.png",
+"CHUCKY1.png",
+"CHTIWID1.png",
+"CINN1.png",
+"CINXSSS1.png",
+"CIREMYXX1.png",
+"CLM1.png",
+"COCOW1.png",
+"COMPLEX1.png",
+"COZ1.png",
+"COZZER1.png",
+"CPTSALMON1.png",
+"CROSSHAIRS1.png",
+"CRUZIAL1.png",
+"CRXLY1.png",
+"DAGOS1.png",
+"DAM1.png",
+"DAMPOULETO1.png",
+"DANTAFASS1.png",
+"DARK621.png",
+"DARKER1.png",
+"DARKESTSENTINEL1.png",
+"DARKLIGHT1.png",
+"DAZZLE1.png",
+"DEFAULT1.png",
+"DEGSTM1.png",
+"DEMOTIVATOR1.png",
+"DENNISS1.png",
+"DEROLT1.png",
+"DEXTER1.png",
+"DIONYSOS1.png",
+"DOFAULT1.png",
+"DOWN1.png",
+"DOYLE1.png",
+"DROLE2CON1.png",
+"DUBBY1.png",
+"DUNSTE1.png",
+"DYDY1.png",
+"EGGY1.png",
+"ELCONN1.png",
+"ELIXIR1.png",
+"EMILIEN1.png",
+"ENDER1.png",
+"EPOS1.png",
+"ERIA1.png",
+"ERIA2.png",
+"ERIZEL1.png",
+"EVON1.png",
+"F6T1.png",
+"FATINHO1.png",
+"FATINHO2.png",
+"FAYEUR1.png",
+"FEED1.png",
+"FEGIR1.png",
+"FENRIRC1371.png",
+"FLOW1.png",
+"FONTUR1.png",
+"FREDWOLF1.png",
+"FRIZZ1.png",
+"FROSTBEULE1.png",
+"GGEEK1.png",
+"GLADAVICOM1.png",
+"GLAST1.png",
+"GOLD1.png",
+"GOLDY1.png",
+"GRANADY1.png",
+"GWEN1.png",
+"HABE1.png",
+"HAEDRA1.png",
+"HAKKIJUNIOR1.png",
+"HARTONAF1.png",
+"HAYIOM1.png",
+"HEADMASTERKILL1.png",
+"HEATHCLIFF1.png",
+"HEAV1.png",
+"HEFEST1.png",
+"HELLOMARC1.png",
+"HELZINKA1.png",
+"HENDO1.png",
+"HENKAN1.png",
+"HENKISME1.png",
+"HERGAM1.png",
+"HOBBIT1.png",
+"HOLFREAK1.png",
+"HOLO1.png",
+"HUBABIBI1.png",
+"HUGO2201.png",
+"HUSO1.png",
+"IAMPD1.png",
+"ICE1.png",
+"ICE2.png",
+"IDOLESS1.png",
+"IESAUKA1.png",
+"IESAUKA2.png",
+"IESAUKA3.png",
+"IGNITE1.png",
+"IIHUGO1.png",
+"IKARUS1.png",
+"IKEWOLF1.png",
+"IMOT1.png",
+"INSANE1.png",
+"INSANITY1.png",
+"INTAX1.png",
+"IPRIME.png",
+"IRIDIUM1.png",
+"JAAKAAH1.png",
+"JAJA1.png",
+"JAKERAY1.png",
+"JAM1.png",
+"JAN1.png",
+"JAVIFLYER1.png",
+"JAVZO1.png",
+"JDON1.png",
+"JEANRENE1.png",
+"JINGATAK1.png",
+"JITSKY1.png",
+"JOJOLEPRO1.png",
+"JOKER1.png",
+"JOLYPOP1.png",
+"JOSH1.png",
+"JOYMILO1.png",
+"JOZO1.png",
+"JSWAG1.png",
+"JULIANO1.png",
+"JURIX1.png",
+"JUSSY1.png",
+"KAKNE1.png",
+"KAMA1.png",
+"KAMIKALASH1.png",
+"KANN1.png",
+"KAPPA1.png",
+"KARJEN1.png",
+"KARLUKKI1.png",
+"KARMA1.png",
+"KARMA2.png",
+"KEBY1.png",
+"KEFFIN1.png",
+"KEM1.png",
+"KERBEROS1.png",
+"KEY1.png",
+"KEZSKIA1.png",
+"KILLZERAX1.png",
+"KILOU1.png",
+"KNYNTSJE1.png",
+"KOBLE1.png",
+"KOENZ1.png",
+"KOPRO1.png",
+"KORCH1.png",
+"KORNIEE1.png",
+"KRUDE1.png",
+"KUEBELCHRIS1.png",
+"KUUMBA1.png",
+"KVIKK1.png",
+"KYLE1.png",
+"LAPEPITE1.png",
+"LARS1.png",
+"LATTACK1.png",
+"LEAF1.png",
+"LEGU1.png",
+"LEPAING1.png",
+"LEVONN1.png",
+"LINGO1.png",
+"LINK1.png",
+"LIQUID1.png",
+"LNKO1.png",
+"LOKOGZ1.png",
+"LORDQUACKED1.png",
+"LOSO1.png",
+"LOUMAR1.png",
+"LOUPPHOK1.png",
+"LUCKERSTURBO1.png",
+"LUDOW1.png",
+"LUECES1.png",
+"LUKARIO1.png",
+"LULUB1.png",
+"LUMAR1.png",
+"LYKER1.png",
+"MACROBLOKOS1.png",
+"MAGEFROMAGE1.png",
+"MAGORIAN1.png",
+"MAJIJEJ1.png",
+"MANIAAAAC1.png",
+"MANTAAA1.png",
+"MARIINA1.png",
+"MARIJNTJE1.png",
+"MARIOGALAXY1.png",
+"MARIUS1.png",
+"MASSA1.png",
+"MATHYPER1.png",
+"MATP1.png",
+"MATTOUZZ1.png",
+"MAWI1.png",
+"MAXTRACK1.png",
+"MEBE1.png",
+"MELIOO1.png",
+"MELLOWJA.png",
+"MENTOZ1.png",
+"MERICLE1.png",
+"MERTZJR1.png",
+"MICKA1.png",
+"MICKBZH1.png",
+"MICMO1.png",
+"MIME1.png",
+"MIMOJR1.png",
+"MIN1.png",
+"MIQUATRO1.png",
+"MITRA1.png",
+"MIXMOD1.png",
+"MOLLE1.png",
+"MONKEY1.png",
+"MOOSE1.png",
+"MORHPEO1.png",
+"MORIAH1.png",
+"MOROVACH1.png",
+"MOUTRONIS1.png",
+"MTAT1.png",
+"MUDDA1.png",
+"NA1VE1.png",
+"NABLA1.png",
+"NALAX1.png",
+"NASTIBE1.png",
+"NASTIBE2.png",
+"NATH1.png",
+"NATUSSGLUTEN1.png",
+"NAUU1.png",
+"NAVI1.png",
+"NAYKO1.png",
+"NEAL1.png",
+"NEKO1.png",
+"NEKOJIM1.png",
+"NEODYM1.png",
+"NEON1.png",
+"NEURO1.png",
+"NEVERMIND1.png",
+"NEZIIUM.png",
+"NICOB1.png",
+"NICSOBY1.png",
+"NIKO1.png",
+"NIKOLECH1.png",
+"NITECH1.png",
+"NITRALIS1.png",
+"NITROFEINT.png",
+"NIXOTICA1.png",
+"NOBY1.png",
+"NOISZIA1.png",
+"NORBINARUS1.png",
+"NORMAN1.png",
+"NOTHING1.png",
+"NOTTCURIOUS1.png",
+"NOVA1.png",
+"NOVASTXR1.png",
+"NOVU1.png",
+"NRGZ1.png",
+"NUPRIME1.png",
+"OBITO1.png",
+"OLUMSY1.png",
+"OMNIPOTZ1.png",
+"OPALE1.png",
+"ORGE1.png",
+"OTAAAQ1.png",
+"OXID1.png",
+"OZY1.png",
+"PAARDENVECHTER1.png",
+"PAC1.png",
+"PALMITOS1.png",
+"PAPETVAUDOIS1.png",
+"PAPOU1.png",
+"PATROSE1.png",
+"PAULL1.png",
+"PAULO1.png",
+"PECUNIAADEST1.png",
+"PEPITE2.png",
+"PEZI1.png",
+"PHOEBE1.png",
+"PIRANHA1.png",
+"PLASTOREX1.png",
+"PLOMBZ1.png",
+"POEPBOER1.png",
+"POKER1.png",
+"POLYCOPY1.png",
+"PUG1.png",
+"PURPLE1.png",
+"PUSZTITOPAKO1.png",
+"QIRAJ1.png",
+"QUENTIN431.png",
+"QUETE1.png",
+"QUIBZ1.png",
+"RACEHANS1.png",
+"RADIANCE1.png",
+"RADIAXO1.png",
+"RAG1.png",
+"RAGNARINHO1.png",
+"RAISTLIN1.png",
+"RANGO1.png",
+"RASG1.png",
+"RATCHET1.png",
+"RAZII1.png",
+"REDBOLT1.png",
+"REVOLUTION1.png",
+"RHETORIQUE1.png",
+"RICHIE1.png",
+"RIN1.png",
+"RINGOA1.png",
+"ROA1.png",
+"ROLLIN1.png",
+"ROOK1E1.png",
+"ROQUETE1.png",
+"ROQUETT1.png",
+"ROTAKER1.png",
+"ROTREX1.png",
+"ROZU1.png",
+"RYOU1.png",
+"RYUHAX1.png",
+"SABRE1.png",
+"SABZ1.png",
+"SALAMANKA1.png",
+"SALTY1.png",
+"SAMIFYING1.png",
+"SAMZ1.png",
+"SANDDER1.png",
+"SANO1.png",
+"SAPI1.png",
+"SARDOCHE1.png",
+"SAVATY1.png",
+"SAWKI1.png",
+"SCARPURP1.png",
+"SCRAPIE1.png",
+"SEBI1.png",
+"SELRAHC1.png",
+"SENJOJO1.png",
+"SHADENIS1.png",
+"SHADOW1.png",
+"SHARK1.png",
+"SHARKYN1.png",
+"SHCR1.png",
+"SHEINEX1.png",
+"SHEINIMI1.png",
+"SHENGAR1.png",
+"SHIELDBANDIT1.png",
+"SHORTY1.png",
+"SHORTYGRAY1.png",
+"SHPLUCK1.png",
+"SIMO1.png",
+"SIMPLYNICK1.png",
+"SIQAA1.png",
+"SIROZE1.png",
+"SKANDEAR1.png",
+"SKIFREAK1.png",
+"SKUEN1.png",
+"SKY1.png",
+"SLOWPIOU1.png",
+"SLY1.png",
+"SMITHY1.png",
+"SNAPPIE1.png",
+"SNATIX1.png",
+"SNOW.png",
+"SOCKS1.png",
+"SOLIVAGANTZ.png",
+"SOPHIEICE1.png",
+"SOULJA1.png",
+"SPAMMIEJ1.png",
+"SPARK1.png",
+"SPEEDSELF1.png",
+"SQLC1.png",
+"SRK1.png",
+"STEG1.png",
+"STOKEINE1.png",
+"STUFTS1.png",
+"SUPERCARLOUF1.png",
+"SUPERNOWA1.png",
+"SUSUWI1.png",
+"SYMPTHOME1.png",
+"TAAK1.png",
+"TACOS1.png",
+"TALA1.png",
+"TANKROM1.png",
+"TARPOR1.png",
+"TECKSO1.png",
+"TEKKY1.png",
+"TELNEI1.png",
+"TEUFLUM1.png",
+"THEDARKWIX1.png",
+"THERENOFELLA1.png",
+"THOMASJEAN1.png",
+"THOMBERN1.png",
+"TIMMYS1.png",
+"TJALIC1.png",
+"TMDISK1.png",
+"TMNIXHAR1.png",
+"TOMMY1.png",
+"TOMOTE1.png",
+"TONA1.png",
+"TOPPEN1.png",
+"TOTO1.png",
+"TOUF1.png",
+"TOXIKO1.png",
+"TRIDENT1.png",
+"TRILISK1.png",
+"TROULET1.png",
+"TSEKO.png",
+"TUDUTTUDUU1.png",
+"TUNDER1.png",
+"TUNIXX1.png",
+"TUNIXX2.png",
+"TWEEN1.png",
+"TYLERZZ1.png",
+"UJIMAA1.png",
+"UTAA1.png",
+"VELOM1.png",
+"VEVOLUTION1.png",
+"VIILOM1.png",
+"VIINCH1.png",
+"VIIPER1.png",
+"VIIPER2.png",
+"VIKENTIYY1.png",
+"VIKENTIYY2.png",
+"VINGUMMI1.png",
+"VIRTUOZ1.png",
+"VIXXA1.png",
+"VORTAX1.png",
+"VORTEX1.png",
+"VORTEX2.png",
+"VRINHO1.png",
+"VULNERRA1.png",
+"WALEGEN1.png",
+"WALTEN1.png",
+"WARL1.png",
+"WAWA1.png",
+"WAZYX1.png",
+"WHIZZY1.png",
+"WILEKNAS1.png",
+"WILLOX1.png",
+"WINGOBEAR1.png",
+"WINKYFACE1.png",
+"WIRTUAL1.png",
+"WOOP1.png",
+"WORKER1.png",
+"WOSILE1.png",
+"XENOGEAR1.png",
+"XERAR1.png",
+"XERTOX.png",
+"XERTZY1.png",
+"XIRO1.png",
+"XIRO2.png",
+"XSTRAB1.png",
+"YAMII1.png",
+"YANNEX1.png",
+"YASHABAD1.png",
+"YEAGER1.png",
+"YEIMS1.png",
+"YEUS1.png",
+"YNOS1.png",
+"YNOS2.png",
+"YNOS3.png",
+"YOURI1.png",
+"YOYO1.png",
+"ZEEMUIS1.png",
+"ZENTRIAN1.png",
+"ZENYY1.png",
+"ZIMZALABIIM1.png",
+"ZIREN1.png",
+"ZODIARK1.png",
+"ZYPHER1.png"
+];
+/* ========= DOM ========= */
+const openBtn = document.getElementById("openPack");
+const remainingTxt = document.getElementById("remaining");
+const animationEl = document.getElementById("animation");
+const countdownEl = document.getElementById("countdown");
+const resultDiv = document.getElementById("result");
+const inventoryDiv = document.getElementById("inventory");
+const progressTxt = document.getElementById("progress");
+const searchInput = document.getElementById("search");
+const cardPreview = document.getElementById("cardPreview");
+const cardPreviewImg = document.getElementById("cardPreviewImg");
+
+const dailyRecapWrap = document.getElementById("dailyRecap");
+const recapCanvas = document.getElementById("recapCanvas");
+const copyToast = document.getElementById("copyToast");
+const ownedOnlyCheckbox = document.getElementById("ownedOnly");
+
+
+/* ========= STORAGE ========= */
+function todayKey(){
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function loadData(){
+  const raw = localStorage.getItem("chacalou_pack_final");
+  const fresh = { date: todayKey(), remaining: MAX_PACKS_PER_DAY, owned: [], todayPacks: [] };
+
+  if(!raw) return fresh;
+
+  try{
+    const d = JSON.parse(raw);
+
+    // Nouveau jour => on reset remaining + todayPacks, mais on garde owned
+    if(d.date !== todayKey()){
+      return {
+        date: todayKey(),
+        remaining: MAX_PACKS_PER_DAY,
+        owned: Array.isArray(d.owned) ? d.owned : [],
+        todayPacks: []
+      };
+    }
+
+    return {
+      date: d.date || todayKey(),
+      remaining: Number.isFinite(d.remaining) ? d.remaining : MAX_PACKS_PER_DAY,
+      owned: Array.isArray(d.owned) ? d.owned : [],
+      todayPacks: Array.isArray(d.todayPacks) ? d.todayPacks : []
+    };
+  }catch{
+    return fresh;
+  }
+}
+
+let data = loadData();
+
+function saveData(){
+  localStorage.setItem("chacalou_pack_final", JSON.stringify(data));
+}
+
+/* ========= UI ========= */
+function updateRemaining(){
+  remainingTxt.textContent = `Packs remaining today: ${data.remaining}/${MAX_PACKS_PER_DAY}`;
+}
+
+function computeProgress(){
+  const ownedUnique = new Set(data.owned);
+  const ownedCount = [...ownedUnique].filter(x => PACK_IMAGES.includes(x)).length;
+  const total = PACK_IMAGES.length;
+  const percent = total ? ((ownedCount / total) * 100).toFixed(2) : "0.00";
+  progressTxt.textContent = `${percent}% (${ownedCount}/${total})`;
+}
+
+function renderInventory(){
+  inventoryDiv.innerHTML = "";
+
+  const query = searchInput.value.toLowerCase();
+  const ownedSet = new Set(data.owned);
+  const ownedOnly = ownedOnlyCheckbox.checked;
+
+  for(const imgName of PACK_IMAGES){
+
+    // 🔍 filtre recherche
+    if(!imgName.toLowerCase().includes(query)) continue;
+
+    // ✅ filtre "owned only"
+    if(ownedOnly && !ownedSet.has(imgName)) continue;
+
+    const img = document.createElement("img");
+    img.src = "/pack/images/" + imgName;
+    img.loading = "lazy";
+
+    if(ownedSet.has(imgName)) img.classList.add("owned");
+
+    img.onclick = () => {
+      cardPreviewImg.src = img.src;
+      cardPreview.style.display = "flex";
+    };
+
+    img.onerror = () => { img.style.opacity = ".15"; };
+
+    inventoryDiv.appendChild(img);
+  }
+
+  computeProgress();
+}
+
+
+/* ========= DAILY RECAP ========= */
+function loadImage(src){
+  return new Promise((resolve, reject) => {
+    const i = new Image();
+    i.onload = () => resolve(i);
+    i.onerror = reject;
+    i.src = src;
+  });
+}
+
+async function generateDailyRecap(){
+  if(data.todayPacks.length === 0) return;
+
+  dailyRecapWrap.style.display = "block";
+
+  const ctx = recapCanvas.getContext("2d");
+  ctx.clearRect(0,0,recapCanvas.width,recapCanvas.height);
+
+  // Fond
+  try{
+    const bg = await loadImage("dailyfond.png");
+    ctx.drawImage(bg, 0, 0, recapCanvas.width, recapCanvas.height);
+  }catch{
+    // fallback si dailyfond.png introuvable
+    ctx.fillStyle = "#120021";
+    ctx.fillRect(0,0,recapCanvas.width,recapCanvas.height);
+  }
+
+// TITRE
+const titleY = 110;
+ctx.textAlign = "left";
+ctx.font = "900 92px Arial";
+
+const text1 = "MY ";
+const text2 = "DAILY";
+const text3 = " PACK";
+
+const totalWidth =
+  ctx.measureText(text1).width +
+  ctx.measureText(text2).width +
+  ctx.measureText(text3).width;
+
+let startX = recapCanvas.width / 2 - totalWidth / 2;
+
+ctx.fillStyle = "#fff";
+ctx.fillText(text1, startX, titleY);
+startX += ctx.measureText(text1).width;
+
+ctx.fillStyle = "#ff2bdc";
+ctx.fillText(text2, startX, titleY);
+startX += ctx.measureText(text2).width;
+
+ctx.fillStyle = "#fff";
+ctx.fillText(text3, startX, titleY);
+
+// 🔴 RESET ICI
+ctx.textAlign = "center";
+
+
+
+  // 5 cartes (layout 3 + 2 comme ton exemple)
+  const cards = data.todayPacks.slice(0,5);
+  const w = 280;
+  const h = Math.round(w * 1.25);
+  const gap = 45;
+
+  const topY = 170;
+  const row1X = (recapCanvas.width - (w*3 + gap*2)) / 2;
+  const row2X = (recapCanvas.width - (w*2 + gap*1)) / 2;
+
+  const positions = [
+    {x: row1X + (w+gap)*0, y: topY},
+    {x: row1X + (w+gap)*1, y: topY},
+    {x: row1X + (w+gap)*2, y: topY},
+    {x: row2X + (w+gap)*0, y: topY + h + 55},
+    {x: row2X + (w+gap)*1, y: topY + h + 55},
+  ];
+
+  for(let idx=0; idx<cards.length; idx++){
+    try{
+      const img = await loadImage("/pack/images/" + cards[idx]);
+      ctx.drawImage(img, positions[idx].x, positions[idx].y, w, h);
+    }catch{
+      // si image carte introuvable
+      ctx.fillStyle = "rgba(255,255,255,.12)";
+      ctx.fillRect(positions[idx].x, positions[idx].y, w, h);
+      ctx.fillStyle = "#fff";
+      ctx.font = "bold 28px Arial";
+      ctx.fillText("Missing", positions[idx].x + w/2, positions[idx].y + h/2);
+    }
+  }
+
+  // Progress
+  const ownedCount = [...new Set(data.owned)].filter(x => PACK_IMAGES.includes(x)).length;
+  const total = PACK_IMAGES.length;
+  const percent = total ? ((ownedCount/total)*100).toFixed(2) : "0.00";
+
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "900 80px Arial";
+  ctx.fillText(`${percent}% (${ownedCount}/${total})`, recapCanvas.width/2, 1045);
+
+  // Footer
+  ctx.fillStyle = "#22d3ee";
+  ctx.font = "900 46px Arial";
+  ctx.fillText("OPEN YOUR PACK ON CHACALOU.COM", recapCanvas.width/2, 1155);
+}
+
+async function copyCanvasToClipboard(){
+  // copie image = HTTPS obligatoire + support navigateur
+  if(!navigator.clipboard || typeof ClipboardItem === "undefined"){
+    alert("Copy not supported here. (Need HTTPS / supported browser)");
+    return;
+  }
+
+  recapCanvas.toBlob(async (blob) => {
+    try{
+      await navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
+      copyToast.style.opacity = 1;
+      setTimeout(()=>copyToast.style.opacity=0, 1400);
+    }catch(e){
+      alert("Copy failed (browser blocked). Try HTTPS or another browser.");
+    }
+  }, "image/png");
+}
+
+recapCanvas.addEventListener("click", copyCanvasToClipboard);
+
+/* ========= PACK OPENING ========= */
+let opening = false;
+
+openBtn.onclick = () => {
+  if(opening) return;
+
+  // si déjà fini => on peut juste afficher recap
+  if(data.remaining <= 0){
+    alert("No packs left today. Come back at midnight!");
+    if(data.todayPacks.length) generateDailyRecap();
+    return;
+  }
+
+  if(PACK_IMAGES.length === 0){
+    alert("No cards found: PACK_IMAGES is empty.");
+    return;
+  }
+
+  opening = true;
+  openBtn.disabled = true;
+  resultDiv.innerHTML = "";
+  animationEl.style.display = "block";
+
+  let t = 5;
+  countdownEl.textContent = t;
+
+  const interval = setInterval(()=>{
+    t--;
+    countdownEl.textContent = t;
+  },1000);
+
+  setTimeout(async ()=>{
+    clearInterval(interval);
+
+    const card = PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)];
+
+    // owned (collection globale)
+    if(!data.owned.includes(card)) data.owned.push(card);
+
+    // packs du jour (exactement 5 max)
+    if(data.todayPacks.length < MAX_PACKS_PER_DAY){
+      data.todayPacks.push(card);
+    }
+
+    // decrement puis save
+    data.remaining--;
+    saveData();
+
+    animationEl.style.display = "none";
+    resultDiv.innerHTML = `<img src="/pack/images/${card}" alt="${card}">`;
+
+    opening = false;
+    openBtn.disabled = false;
+
+    updateRemaining();
+    renderInventory();
+
+    // Si terminé => générer recap
+    if(data.remaining === 0){
+      await generateDailyRecap();
+      // scroll doux vers recap
+      dailyRecapWrap.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+  },5000);
+};
+
+/* ========= CLOSE PREVIEW ========= */
+cardPreview.addEventListener("click", () => {
+  cardPreview.style.display = "none";
+  cardPreviewImg.src = "";
+});
+
+document.addEventListener("keydown", (e) => {
+  if(e.key === "Escape"){
+    cardPreview.style.display = "none";
+    cardPreviewImg.src = "";
+  }
+});
+
+/* ========= INIT ========= */
+updateRemaining();
+renderInventory();
+
+searchInput.addEventListener("input", renderInventory);
+ownedOnlyCheckbox.addEventListener("change", renderInventory);
+
+
+// si déjà terminé aujourd’hui => afficher recap direct
+if(data.remaining === 0 && data.todayPacks.length){
+  generateDailyRecap();
+}
+
+/* ========= INFOS MODAL ========= */
+const infoBtn = document.getElementById("infoBtn");
+const infoModal = document.getElementById("infoModal");
+const closeInfo = document.getElementById("closeInfo");
+
+infoBtn.onclick = () => {
+  infoModal.style.display = "flex";
+};
+
+closeInfo.onclick = () => {
+  infoModal.style.display = "none";
+};
+
+infoModal.addEventListener("click", (e) => {
+  if(e.target === infoModal){
+    infoModal.style.display = "none";
+  }
+});
+
+
+</script>
+
+</body>
+</html>

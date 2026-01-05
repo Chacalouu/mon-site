@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>🌴 Rivals – Chacalou.com</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  min-height:100vh;
+  background:url("../background.jpeg") center/cover no-repeat fixed;
+  color:#fff;
+}
+
+.overlay{min-height:100vh;background:rgba(0,0,0,.65)}
+
+/* MENU (identique Survivor) */
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+nav button{
+  background:none;border:none;color:#fff;
+  font-size:32px;cursor:pointer;padding:15px 14px;
+}
+nav button:hover{color:#c084fc}
+
+main{
+  padding:80px 20px;
+  max-width:1200px;
+  margin:auto;
+}
+
+h1{text-align:center;font-size:48px;margin-bottom:20px}
+.section-title{text-align:center;font-size:34px;margin:60px 0 20px}
+.match-title{text-align:center;font-size:32px;margin-top:80px}
+
+.table-wrapper,.division{
+  background:rgba(0,0,0,.55);
+  border-radius:18px;
+  overflow:hidden;
+  margin-top:25px;
+}
+
+table{width:100%;border-collapse:collapse}
+th,td{padding:14px 16px;text-align:center}
+th{background:#7a6cff;font-size:18px}
+tr:nth-child(even){background:rgba(255,255,255,.05)}
+tr:hover{background:rgba(192,132,252,.15)}
+
+.col-rank{width:90px;font-weight:900}
+.col-player{text-align:left;font-weight:900}
+.col-time{width:160px}
+.points{font-weight:900;color:#ffd54f}
+.move{width:60px;font-size:20px}
+
+.division h3{padding:14px;text-align:center;font-size:22px}
+.div1 h3{background:#b38b00}
+.div2 h3{background:#7a6cff}
+.div3 h3{background:#1976d2}
+.div4 h3{background:#c62828}
+
+footer{text-align:center;padding:15px;opacity:.5;font-size:14px}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<nav>
+  <button onclick="window.location.href='../index.html'">Accueil</button>
+  <button onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
+  <button onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
+  <button>Rivals</button>
+  <button onclick="window.location.href='../Mapping/minuteur.html'">Mapping</button>
+  <button onclick="window.location.href='../index.html#jeux'">Jeux</button>
+</nav>
+
+<main>
+  <h1>🏁 RIVALS</h1>
+
+  <div class="section-title">Classement du seeding</div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-rank">#</th>
+          <th>Joueur</th>
+          <th class="col-time">Temps</th>
+        </tr>
+      </thead>
+      <tbody id="ranking-body"></tbody>
+    </table>
+  </div>
+
+  <div id="matches"></div>
+</main>
+
+<footer>Chacalou.com ©</footer>
+
+</div>
+
+<script>
+/* =========================
+   🔥 COLLE TON CLASSEMENT BRUT TRACKMANIA ICI
+   (le parsing robuste récupère pseudo + temps)
+========================= */
+const RAW_RIVALS_DATA = `
+1	
+Norway, Europe, World
+PIWO!
+Utenglutenguten
+
+
+0:15.943
+7 days ago	
+2	
+Denmark, Europe, World
+⏸⏸
+fredwolftm
+
+
+0:15.986(+0:00.043)
+7 days ago	
+3	
+Slovakia, Europe, World
+GLORP
+TarporTM
+
+
+0:15.993(+0:00.050)
+7 days ago	
+4	
+Namur, Belgium, Europe, World
+TSK
+Eria-.
+
+
+0:16.009(+0:00.066)
+7 days ago	
+5	
+Stuttgart, Baden-Württemberg, Germany, Europe, World
+PIWO!
+hayiom..
+
+
+0:16.022(+0:00.079)
+7 days ago	
+6	
+Lisboa, Portugal, Europe, World
+POR
+Zypher.TM
+
+
+0:16.049(+0:00.106)
+7 days ago	
+7	
+Western Australia, Australia, Oceania, World
+ramy52342
+
+
+0:16.113(+0:00.170)
+7 days ago	
+8	
+Sweden, Europe, World
+HARD
+JozoTm
+
+
+0:16.115(+0:00.172)
+7 days ago	
+9	
+Giessen, Hessen, Germany, Europe, World
+VAMOS
+Sampler.4PF
+
+
+0:16.188(+0:00.245)
+7 days ago	
+10	
+Seine-et-Marne, Île-de-France, France, Europe, World
+響け!
+Heav.3Y
+
+
+0:16.277(+0:00.334)
+7 days ago	
+11	
+Gard, Occitanie, France, Europe, World
+///M°
+Bandj.
+
+
+0:16.293(+0:00.350)
+7 days ago	
+12	
+Essonne, Île-de-France, France, Europe, World
+91ه҈ه
+saabz..
+
+
+0:16.297(+0:00.354)
+7 days ago	
+13	
+Nord, Hauts-de-France, France, Europe, World
+SLC.
+NablaTM
+
+
+0:16.300(+0:00.357)
+7 days ago	
+14	
+Gironde, Nouvelle-Aquitaine, France, Europe, World
+MLE
+FenrirC137
+
+
+0:16.329(+0:00.386)
+7 days ago	
+15	
+Iceland, Europe, World
+KYŌ
+Toto-_---
+
+
+0:16.338(+0:00.395)
+7 days ago	
+16	
+Zuid-Holland, Netherlands, Europe, World
+GLORP
+Zeemuis
+
+
+0:16.379(+0:00.436)
+7 days ago	
+17	
+Finland, Europe, World
+MOLO🔥
+Mikkelsgolf
+
+
+0:16.387(+0:00.444)
+7 days ago	
+18	
+Honduras, North America, World
+POLAR
+bead.fs
+
+
+0:16.389(+0:00.446)
+7 days ago	
+19	
+Stuttgart, Baden-Württemberg, Germany, Europe, World
+PIWO!
+Habe..
+
+
+0:16.406(+0:00.463)
+7 days ago	
+20	
+Finistère, Bretagne, France, Europe, World
+Kunz..
+
+
+0:16.456(+0:00.513)
+7 days ago	
+21	
+Haute-Savoie, Auvergne-Rhône-Alpes, France, Europe, World
+
+MangeMoiLeBolet
+
+
+0:16.542(+0:00.599)
+7 days ago	
+22	
+Haute-Loire, Auvergne-Rhône-Alpes, France, Europe, World
+NYX 
+Dolit0x
+
+
+0:16.615(+0:00.672)
+7 days ago	
+23	
+Paris, Île-de-France, France, Europe, World
+ECL
+Lueces
+
+
+0:16.751(+0:00.808)
+7 days ago	
+24	
+Sweden, Europe, World
+TMSWE
+Patale_
+
+
+0:17.338(+0:01.395)
+7 days ago	
+25	
+Loire-Atlantique, Pays-de-la-Loire, France, Europe, World
+Oupii_Goupii
+
+
+0:18.060(+0:02.117)
+5 days ago	
+26	
+Berlin, Germany, Europe, World
+4W: :
+tupper._.
+
+
+0:18.580(+0:02.637)
+7 days ago
+`;
+
+/* =========================
+   POINTS PAR MATCH
+   (tu remplis au fur et à mesure)
+   IMPORTANT: l'ordre des points = l'ordre des joueurs AFFICHÉS
+   dans la division du match concerné (avant tri).
+========================= */
+const MATCH_POINTS = {
+  1:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  2:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  3:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  4:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  5:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]}
+};
+
+/* Multiplicateurs Cup */
+const DIV_MULTIPLIER = {1:2.00, 2:1.75, 3:1.50, 4:1.25};
+
+/* =========================
+   PARSING ROBUSTE (COMME AVANT)
+========================= */
+function isTimeLine(line){
+  return /^\d+:\d{2}\.\d{3}(\(.+\))?$/.test(line);
+}
+function cleanTime(line){
+  return line.split("(")[0].trim();
+}
+
+function parseRivalsRanking(){
+  const lines = RAW_RIVALS_DATA.split("\n").map(l=>l.trim()).filter(Boolean);
+  const rows = [];
+
+  for(let i=0;i<lines.length;i++){
+    // rang = une ligne qui contient uniquement un nombre
+    if(/^\d+$/.test(lines[i])){
+      const rank = +lines[i];
+      let pseudo = "";
+      let time = "";
+
+      // on cherche le premier time-line après le rank
+      for(let j=i+1; j<i+35 && j<lines.length; j++){
+        if(isTimeLine(lines[j])){
+          time = cleanTime(lines[j]);
+
+          // pseudo = la dernière ligne "utile" avant le time
+          for(let k=j-1; k>i; k--){
+            const v = lines[k];
+            if(!v) continue;
+            if(isTimeLine(v)) continue;
+            if(/ago$/i.test(v)) continue;
+            // on évite aussi les lignes "Europe, World" etc => mais dans ton format
+            // la dernière ligne avant le time est bien le pseudo, donc on prend direct.
+            pseudo = v;
+            break;
+          }
+          break;
+        }
+      }
+
+      if(pseudo && time){
+        rows.push({ rank, name: pseudo, time });
+      }
+    }
+  }
+
+  // sécurité : si certains ranks sont dupliqués à cause du format, on garde l'ordre d’apparition
+  return rows;
+}
+
+/* =========================
+   DIVISIONS (surplus -> divisions basses)
+========================= */
+function splitDivisions(players){
+  const base = Math.floor(players.length / 4);
+  let extra = players.length - base * 4;
+
+  const sizes = [base, base, base, base];
+  for(let i=3; i>=0 && extra>0; i--){
+    sizes[i]++; extra--;
+  }
+
+  let idx = 0;
+  return sizes.map(s => players.slice(idx, idx += s));
+}
+
+/* Match complet si chaque div a exactement le bon nombre de points */
+function divIsComplete(matchId, divId, roster){
+  const arr = MATCH_POINTS[matchId]?.[divId] || [];
+  return Array.isArray(arr) && arr.length === roster.length;
+}
+function matchIsComplete(matchId, divs){
+  return [1,2,3,4].every(d => divIsComplete(matchId, d, divs[d-1]));
+}
+
+/* standings (tri par pts si complet) */
+function buildStandings(matchId, divId, roster){
+  const ptsArr = MATCH_POINTS[matchId]?.[divId] || [];
+  const complete = ptsArr.length === roster.length;
+
+  let list = roster.map((p, idx)=>({
+    name: p.name,
+    pts: (ptsArr[idx] !== undefined ? Number(ptsArr[idx]) : null),
+    seedIndex: idx
+  }));
+
+  if(complete){
+    list.sort((a,b)=>{
+      if(b.pts !== a.pts) return b.pts - a.pts;
+      return a.seedIndex - b.seedIndex;
+    });
+  }
+  return { list, complete };
+}
+
+/* Génération match suivant (2 montent / 2 descendent) */
+function generateNextDivisionsFromStandings(standingsByDiv){
+  const d1 = standingsByDiv[0].list.map(x=>x.name);
+  const d2 = standingsByDiv[1].list.map(x=>x.name);
+  const d3 = standingsByDiv[2].list.map(x=>x.name);
+  const d4 = standingsByDiv[3].list.map(x=>x.name);
+
+  const takeTop = (arr,n)=>arr.slice(0, Math.min(n, arr.length));
+  const takeBottom = (arr,n)=>arr.slice(Math.max(0, arr.length-n));
+  const takeMiddle = (arr, topN, bottomN)=>{
+    const start = Math.min(topN, arr.length);
+    const end = Math.max(start, arr.length - Math.min(bottomN, arr.length));
+    return arr.slice(start, end);
+  };
+
+  const d1_down = takeBottom(d1, 2);
+  const d2_up   = takeTop(d2, 2);
+  const d2_down = takeBottom(d2, 2);
+  const d3_up   = takeTop(d3, 2);
+  const d3_down = takeBottom(d3, 2);
+  const d4_up   = takeTop(d4, 2);
+
+  const d1_mid = takeMiddle(d1, 0, 2);
+  const d2_mid = takeMiddle(d2, 2, 2);
+  const d3_mid = takeMiddle(d3, 2, 2);
+  const d4_mid = takeMiddle(d4, 2, 0);
+
+  const next1 = [...d2_up, ...d1_mid];
+  const next2 = [...d3_up, ...d2_mid, ...d1_down];
+  const next3 = [...d4_up, ...d3_mid, ...d2_down];
+  const next4 = [...d4_mid, ...d3_down];
+
+  return [
+    next1.map(name=>({name})),
+    next2.map(name=>({name})),
+    next3.map(name=>({name})),
+    next4.map(name=>({name}))
+  ];
+}
+
+/* =========================
+   RENDER
+========================= */
+const seedingPlayers = parseRivalsRanking();
+
+/* Affiche “Classement du seeding” */
+const rankingBody = document.getElementById("ranking-body");
+rankingBody.innerHTML = "";
+seedingPlayers.forEach(p=>{
+  rankingBody.innerHTML += `
+    <tr>
+      <td class="col-rank">${p.rank}</td>
+      <td class="col-player">${p.name}</td>
+      <td class="col-time">${p.time}</td>
+    </tr>
+  `;
+});
+
+/* Flow matchs */
+const matchesContainer = document.getElementById("matches");
+const divsByMatch = {};
+divsByMatch[1] = splitDivisions(seedingPlayers);
+
+function renderMatch(matchId){
+  matchesContainer.innerHTML += `<div class="match-title">MATCH ${matchId}</div>`;
+
+  const divs = divsByMatch[matchId];
+
+  divs.forEach((roster, i)=>{
+    const divId = i+1;
+    const { list, complete } = buildStandings(matchId, divId, roster);
+
+    matchesContainer.innerHTML += `
+      <div class="division div${divId}">
+        <h3>Division ${divId}</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th class="move"></th>
+              <th>Joueur</th>
+              <th>Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${list.map((p, idx)=>{
+              let icon = "";
+
+              // Emojis uniquement si la div est complète ET pas au match 5
+              if(complete && matchId < 5){
+                const isTop2 = idx < 2;
+                const isBottom2 = idx >= list.length - 2;
+
+                // 🔺 2 premiers montent (sauf div1)
+                if(isTop2 && divId !== 1) icon = "🔺";
+                // 🔻 2 derniers descendent (sauf div4)
+                else if(isBottom2 && divId !== 4) icon = "🔻";
+              }
+
+              return `
+                <tr>
+                  <td>${idx+1}</td>
+                  <td class="move">${icon}</td>
+                  <td class="col-player">${p.name}</td>
+                  <td class="points">${p.pts ?? "-"}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+  });
+}
+
+/* Render match 1 */
+renderMatch(1);
+
+/* Render match 2..5 seulement si le match précédent est complet */
+for(let m=2; m<=5; m++){
+  if(!matchIsComplete(m-1, divsByMatch[m-1])) break;
+
+  const standingsPrev = divsByMatch[m-1].map((roster, idx)=>buildStandings(m-1, idx+1, roster));
+  divsByMatch[m] = generateNextDivisionsFromStandings(standingsPrev);
+
+  renderMatch(m);
+}
+
+/* =========================
+   CLASSEMENT FINAL (après match 5 complet)
+========================= */
+function renderFinalCup(){
+  if(!divsByMatch[5]) return;
+  if(!matchIsComplete(5, divsByMatch[5])) return;
+
+  const scores = {}; // {name: total}
+
+  for(let m=1; m<=5; m++){
+    const divs = divsByMatch[m];
+    if(!divs || !matchIsComplete(m, divs)) return;
+
+    divs.forEach((roster, i)=>{
+      const divId = i+1;
+      const mult = DIV_MULTIPLIER[divId];
+
+      const { list } = buildStandings(m, divId, roster); // trié car complet
+      const size = list.length;
+
+      list.forEach((p, idx)=>{
+        const base = size - idx;      // 1er = X, 2e = X-1, ...
+        const cupPts = base * mult;
+
+        scores[p.name] = (scores[p.name] || 0) + cupPts;
+      });
+    });
+  }
+
+  const final = Object.entries(scores)
+    .map(([name, pts])=>({name, pts}))
+    .sort((a,b)=>b.pts - a.pts);
+
+  matchesContainer.innerHTML += `
+    <div class="match-title">🏆 CLASSEMENT FINAL</div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Joueur</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${final.map((p,i)=>`
+            <tr>
+              <td class="col-rank">${i+1}</td>
+              <td class="col-player">${p.name}</td>
+              <td class="points">${p.pts.toFixed(2)}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+renderFinalCup();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>📅 Schedule</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  min-height:100vh;
+  background:url("../background.jpeg") center/cover no-repeat fixed;
+  color:#fff;
+}
+
+html{
+  scrollbar-gutter: stable;
+}
+
+body{
+  overflow-y: scroll;
+}
+
+.overlay{
+  min-height:100vh;
+  background:rgba(0,0,0,.65);
+}
+
+/* ================= NAV ================= */
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+
+nav button{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:32px;
+  font-weight:normal;
+  cursor:pointer;
+  padding:15px 14px;
+}
+
+nav button:hover{
+  color:#c084fc;
+}
+
+/* ================= CALENDAR ================= */
+.calendar-wrapper{
+  max-width:1100px;
+  margin:60px auto 40px;
+  padding:30px;
+  background:rgba(0,0,0,.55);
+  border-radius:20px;
+  backdrop-filter:blur(8px);
+}
+
+.calendar-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.calendar-header h2{
+  font-size:32px;
+  font-weight:normal;
+}
+
+.calendar-header button{
+  background:none;
+  border:1px solid #c084fc;
+  color:#c084fc;
+  font-size:18px;
+  padding:8px 14px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.calendar-header button:hover{
+  background:#c084fc;
+  color:#000;
+}
+
+.weekdays, .days{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+}
+
+.weekdays div{
+  text-align:center;
+  padding:10px 0;
+  opacity:.6;
+  font-size:14px;
+}
+
+.day{
+  min-height:120px;
+  border:1px solid rgba(255,255,255,.08);
+  padding:8px;
+  position:relative;
+}
+
+.day-number{
+  font-size:14px;
+  opacity:.6;
+}
+
+.event{
+  margin-top:6px;
+  background:#c084fc;
+  color:#000;
+  padding:4px 6px;
+  border-radius:6px;
+  font-size:12px;
+}
+
+/* ================= FOOTER ================= */
+.footer{
+  position:fixed;
+  bottom:12px;
+  width:100%;
+  text-align:center;
+  font-size:14px;
+  opacity:0.6;
+  color:#fff;
+  pointer-events:none;
+}
+
+/* COULEURS PLANNING */
+
+.event.red{background:#ef4444}
+.event.violet{background:#c084fc}
+.event.blue{background:#3b82f6}
+.event.green{background:#22c55e}
+.event.orange{background:#f97316}
+.event.yellow{background:#eab308}
+
+.event-time{
+  margin-top:4px;
+  font-size:11px;
+  opacity:.85;
+  background:rgba(0,0,0,.35);
+  padding:2px 6px;
+  border-radius:6px;
+  width:fit-content;
+}
+
+
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<nav>
+<button type="button" onclick="window.location.href='../index.html'">Home</button>
+<button type="button" onclick="window.location.href='prog.html'">Schedule</button>
+<button type="button" onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
+<button type="button" onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
+<button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
+<button type="button" onclick="window.location.href='../pack/pack.html'">TM Pack</button>
+<button type="button" onclick="window.location.href='../maps/maps.html'">My Maps</button>
+<button type="button" onclick="window.location.href='../mapping/minuteur.html'">Mapping</button>
+
+</nav>
+
+<div class="calendar-wrapper">
+  <div class="calendar-header">
+    <button onclick="changeMonth(-1)">◀</button>
+    <h2 id="monthTitle"></h2>
+    <button onclick="changeMonth(1)">▶</button>
+  </div>
+
+  <div class="weekdays">
+    <div>Mon</div><div>Tue</div><div>Wed</div>
+    <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+  </div>
+
+  <div class="days" id="calendarDays"></div>
+</div>
+
+<footer class="footer">
+  Chacalou.com ©
+</footer>
+
+</div>
+
+<script>
+/* ================= EVENTS ================= */
+/* AJOUTE TES EVENTS ICI */
+const events = {
+  "2026-01-01": ["HAPPY NEW YEAR !!|0:00:blue"],
+  "2026-01-13": ["Life Cup & Mapping|21:00:green"],
+  "2026-01-12": ["Twenty is Back !|20:20:yellow"],
+  "2026-01-14": ["Survivor is Back !|21:00:red","Speedmapping!|22:00:orange"],
+  "2026-01-15": ["NEW CUP ! Rivals|21:00:purple"],
+  "2026-01-19": ["Twenty S7 E2|20:20:yellow"],
+  "2026-01-21": ["Survivor S7 E2|21:00:red"],
+  "2026-01-22": ["Rivals S1 E2|21:00:purple"],
+  "2026-01-26": ["Twenty S7 E2|20:20:yellow"],
+  "2026-01-28": ["Survivor S7 E2|21:00:red"],
+  "2026-01-29": ["Rivals S1 E2|21:00:purple"]
+};
+
+/* ================= CALENDAR LOGIC ================= */
+let currentMonth = 0; // Janvier
+let currentYear = 2026;
+
+const monthNames = [
+  "January","February","March","April","May","June",
+  "July","August","September","October","November","December"
+];
+
+function renderCalendar(){
+  const daysContainer = document.getElementById("calendarDays");
+  daysContainer.innerHTML = "";
+
+  document.getElementById("monthTitle").innerText =
+    monthNames[currentMonth] + " " + currentYear;
+
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay() || 7;
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  for(let i=1;i<firstDay;i++){
+    daysContainer.innerHTML += `<div class="day"></div>`;
+  }
+
+  for(let day=1;day<=daysInMonth;day++){
+    const dateKey = `${currentYear}-${String(currentMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+    let eventHTML = "";
+
+    if(events[dateKey]){
+      events[dateKey].forEach(e=>{
+  let label = e;
+  let time = "";
+  let color = "violet"; // défaut
+
+  // Séparation nom | reste
+  if(e.includes("|")){
+    const parts = e.split("|");
+    label = parts[0];
+
+    const details = parts[1].split(":");
+    time = details[0] + ":" + details[1];
+    color = details[2] || "violet";
+  }
+
+  eventHTML += `
+    <div class="event ${color}">${label}</div>
+    ${time ? `<div class="event-time">${time}</div>` : ""}
+  `;
+});
+
+
+    }
+
+    daysContainer.innerHTML += `
+      <div class="day">
+        <div class="day-number">${day}</div>
+        ${eventHTML}
+      </div>`;
+  }
+}
+
+function changeMonth(delta){
+  currentMonth += delta;
+  if(currentMonth < 0){
+    currentMonth = 11;
+    currentYear--;
+  }
+  if(currentMonth > 11){
+    currentMonth = 0;
+    currentYear++;
+  }
+  renderCalendar();
+}
+
+renderCalendar();
+</script>
+
+</body>
+</html>

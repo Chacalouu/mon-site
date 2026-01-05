@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🧩 Mapping</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+/* =========================
+   BACKGROUND + OVERLAY
+========================= */
+body{
+  min-height:100vh;
+  background:url("../background.jpeg") center/cover no-repeat fixed;
+  color:#fff;
+}
+
+html{scrollbar-gutter:stable}
+body{overflow-y:scroll}
+
+.overlay{
+  min-height:100vh;
+  background:rgba(0,0,0,.65);
+}
+
+/* =========================
+   NAVBAR
+========================= */
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+
+nav button{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:32px;
+  font-weight:normal;
+  cursor:pointer;
+  padding:15px 14px;
+}
+
+nav button:hover{color:#c084fc}
+
+/* =========================
+   CENTRAGE
+========================= */
+.container-wrapper{
+  min-height:calc(100vh - 72px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+}
+
+.container{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+}
+
+/* =========================
+   GREEN BOX
+========================= */
+.green-box{
+  background:#1db954;
+  width:520px;
+  border-radius:28px;
+  box-shadow:0 12px 32px rgba(0,0,0,.25);
+  padding:18px 20px 20px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.draw-result{
+  color:#fff;
+  font-size:45px;
+  font-weight:900;
+  text-align:center;
+  line-height:1.2;
+  text-shadow:0 4px 12px rgba(0,0,0,.55);
+}
+
+.timer{
+  color:#fff;
+  font-size:80px;
+  font-weight:900;
+  letter-spacing:3px;
+  margin-top:-18px;
+  text-shadow:0 6px 18px rgba(0,0,0,.6);
+}
+
+.timer.alert{
+  color:#ff2b2b;
+  animation:blink .8s infinite;
+}
+
+@keyframes blink{
+  0%{opacity:1}
+  50%{opacity:.3}
+  100%{opacity:1}
+}
+
+/* =========================
+   CONTROLS
+========================= */
+.controls{display:flex;gap:10px;align-items:center}
+label{font-weight:700}
+input{
+  width:90px;
+  padding:8px 10px;
+  border-radius:10px;
+  border:2px solid #ddd;
+  font-size:16px;
+  font-weight:700;
+  text-align:center;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.buttons{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center
+}
+
+.buttons button{
+  padding:12px 22px;
+  font-size:16px;
+  font-weight:900;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  background:#1db954;
+  color:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.2);
+}
+
+.pause{background:#ffb300;color:#000}
+.reset{background:#e53935}
+.draw{background:#1976d2}
+.buttons button:disabled{opacity:.5;cursor:not-allowed}
+
+.footer{
+  position:fixed;
+  bottom:12px;
+  width:100%;
+  text-align:center;
+  font-size:14px;
+  opacity:.6;
+  pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<nav>
+  <button type="button" onclick="window.location.href='../index.html'">Home</button>
+  <button type="button" onclick="window.location.href='../prog/prog.html'">Schedule</button>
+  <button type="button" onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
+  <button type="button" onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
+  <button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
+  <button type="button" onclick="window.location.href='../pack/pack.html'">TM Pack</button>
+  <button type="button" onclick="window.location.href='../maps/maps.html'">My Maps</button>
+  <button type="button" onclick="window.location.href='mapping/minuteur.html'">Mapping</button>
+</nav>
+
+<div class="container-wrapper">
+  <div class="container">
+
+    <div class="green-box">
+      <div class="draw-result" id="drawResult">Theme</div>
+      <div class="timer" id="timer">15:00</div>
+    </div>
+
+    <div class="controls">
+      <label>Minutes</label>
+      <input type="number" id="minutes" value="15" min="0">
+      <label>Seconds</label>
+      <input type="number" id="seconds" value="0" min="0" max="59">
+    </div>
+
+    <div class="buttons">
+      <button id="start">Start</button>
+      <button id="pause" class="pause" disabled>Pause</button>
+      <button id="reset" class="reset" disabled>Reset</button>
+      <button id="draw" class="draw">Draw</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== AUDIO ===== */
+let audioCtx=null;
+function unlockAudio(){
+  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended") audioCtx.resume();
+}
+function playAlert(){
+  if(!audioCtx) return;
+  const now=audioCtx.currentTime;
+  const o=audioCtx.createOscillator();
+  const g=audioCtx.createGain();
+  o.type="sine"; o.frequency.value=880;
+  g.gain.setValueAtTime(0.0001,now);
+  g.gain.linearRampToValueAtTime(0.18,now+.02);
+  g.gain.linearRampToValueAtTime(0.0001,now+.25);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(now+.3);
+}
+
+/* ===== TIMER ===== */
+const timerEl=document.getElementById("timer");
+const minEl=document.getElementById("minutes");
+const secEl=document.getElementById("seconds");
+const startBtn=document.getElementById("start");
+const pauseBtn=document.getElementById("pause");
+const resetBtn=document.getElementById("reset");
+
+let time=15*60;
+let interval=null;
+
+function render(){
+  timerEl.textContent=
+    String(Math.floor(time/60)).padStart(2,"0")+":"+
+    String(time%60).padStart(2,"0");
+}
+
+function finish(){
+  clearInterval(interval);
+  interval=null;
+  time=0;
+  render();
+  timerEl.classList.add("alert");
+  playAlert();
+  minEl.disabled=secEl.disabled=false;
+}
+
+startBtn.onclick=()=>{
+  unlockAudio();
+  if(interval) return;
+  timerEl.classList.remove("alert");
+  time=(+minEl.value*60)+(+secEl.value);
+  if(time<=0) return;
+  render();
+  minEl.disabled=secEl.disabled=true;
+  pauseBtn.disabled=resetBtn.disabled=false;
+  pauseBtn.textContent="Pause";
+  interval=setInterval(()=>{
+    time--;
+    render();
+    if(time<=0) finish();
+  },1000);
+};
+
+pauseBtn.onclick=()=>{
+  unlockAudio();
+  if(interval){
+    clearInterval(interval);
+    interval=null;
+    pauseBtn.textContent="Resume";
+  }else if(time>0){
+    pauseBtn.textContent="Pause";
+    interval=setInterval(()=>{
+      time--;
+      render();
+      if(time<=0) finish();
+    },1000);
+  }
+};
+
+resetBtn.onclick=()=>{
+  clearInterval(interval);
+  interval=null;
+  time=(+minEl.value*60)+(+secEl.value);
+  timerEl.classList.remove("alert");
+  render();
+  minEl.disabled=secEl.disabled=false;
+  pauseBtn.textContent="Pause";
+};
+
+/* ===== THEMES (ENGLISH) ===== */
+const themes=[
+"Classic Tech","Auto-drift Tech","Transitional Tech","Speedtech",
+"Mixed 2 Surfaces","Mixed 3 Surfaces","Mixed 4 Surfaces",
+"Snow Car Only","Desert Car Only","Rally Car Only",
+"Dirt Gear 3","Dirt Gear 4","Dirt Gear 5",
+"Grass Gear 3","Grass Gear 4","Grass Gear 5",
+"Fullspeed","Ice Gear 3","Ice Gear 4",
+"Plastic Only","Bobsleigh","Heavy Transitions","RPG","Competitive",
+"3 Blocks Wide","7x7 Cube","Uphill Only","Downhill Only",
+"Freewheel","Funspeed","LOL Map","3 Jumps Minimum","Slow Motion",
+"Royal Style","Water","Grass Slides","2 Tricks Required",
+"Barrels","Transfers","2 Cars","Slow Wood","Classic Wood",
+"Fast Wood","Off-road","Off-grid","Reactor Up","Reactor Down",
+"Round Map","Forced Cam 3","Map With Cut","Hardway / Safeway",
+"Multiple Routes","Very Dark Map","Bonks",
+"Letter Shape","Number Shape",
+"15 Blocks Max","10 Blocks Max","5 Blocks Max",
+"No Test Mapping","Nascar","No Brake Block","Fragile Blocks",
+"Only Right Turns","Only Left Turns",
+"Back & Forth Map","One-shot Mapping","Moving Blocks"
+];
+
+const drawBtn=document.getElementById("draw");
+const drawResult=document.getElementById("drawResult");
+
+drawBtn.onclick=()=>{
+  let elapsed=0;
+  drawBtn.disabled=true;
+  const shuffle=setInterval(()=>{
+    drawResult.textContent=themes[Math.floor(Math.random()*themes.length)];
+    elapsed+=100;
+    if(elapsed>=5000){
+      clearInterval(shuffle);
+      drawResult.textContent=themes[Math.floor(Math.random()*themes.length)];
+      drawBtn.disabled=false;
+    }
+  },100);
+};
+</script>
+
+<footer class="footer">Chacalou.com ©</footer>
+
+</div>
+</body>
+</html>

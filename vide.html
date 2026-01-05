@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mes Maps</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  min-height:100vh;
+  background:url("../background.jpeg") center/cover no-repeat fixed; /* ✅ background.jpeg */
+  color:#fff;
+}
+
+.overlay{
+  min-height:100vh;
+  background:rgba(0,0,0,.65);
+}
+
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+
+nav button{
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:32px;
+  font-weight:normal; /* ✅ important: pas gras */
+  cursor:pointer;
+  padding:15px 14px;
+}
+
+nav button:hover{
+  color:#c084fc;
+}
+
+.footer{
+  position:fixed;
+  bottom:12px;
+  width:100%;
+  text-align:center;
+  font-size:14px;
+  opacity:0.6;
+  color:#fff;
+  pointer-events:none;
+}
+
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<!-- MENU EXACT (même que Survivor/Rivals/Twenty) -->
+<nav>
+<button onclick="window.location.href='../index.html'">Home</button>
+<button onclick="window.location.href='../prog/prog.html'">Schedule</button>
+<button onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
+<button onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
+<button onclick="window.location.href='../Rivals/index.html'">Rivals</button>
+<button onclick="window.location.href='maps/maps.html'">My Maps</button>
+<button onclick="window.location.href='../Mapping/minuteur.html'">Mapping</button>
+<button onclick="window.location.href='../Jeux/jeux.html'">Games</button>
+</nav>
+
+<footer class="footer">
+  Chacalou.com © 
+</footer>
+
+</div>
+</body>
+</html>

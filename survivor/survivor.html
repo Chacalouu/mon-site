@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<title>💀 Survivor</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+
+body{
+  min-height:100vh;
+  background:url("background.jpeg") center/cover no-repeat fixed;
+  color:#fff;
+}
+
+html{
+  scrollbar-gutter: stable;
+}
+
+body{
+  overflow-y: scroll;
+}
+
+.overlay{
+  min-height:100vh;
+  background:rgba(0,0,0,.7);
+}
+
+/* NAVBAR */
+nav{
+  display:flex;
+  justify-content:center;
+  gap:25px;
+  padding:10px;
+  background:rgba(0,0,0,.6);
+  backdrop-filter:blur(6px);
+}
+nav button{
+  background:none;border:none;color:#fff;
+  font-size:32px;cursor:pointer;padding:15px 14px;
+}
+nav button:hover{color:#c084fc}
+
+/* MAIN */
+main{
+  padding:80px 20px;
+  max-width:1400px;
+  margin:auto;
+}
+
+h1{
+  text-align:center;
+  font-size:48px;
+  margin-bottom:30px;
+}
+
+/* SEARCH */
+.search{
+  display:flex;
+  justify-content:center;
+  margin-bottom:25px;
+}
+.search input{
+  padding:12px 16px;
+  border-radius:12px;
+  border:none;
+  min-width:280px;
+  font-size:16px;
+}
+
+/* TABLE */
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:rgba(0,0,0,.55);
+  border-radius:16px;
+  overflow:hidden;
+}
+
+th,td{
+  padding:12px;
+  text-align:center;
+}
+
+th{
+  background:#7b1e1e;
+  font-size:16px;
+  cursor:pointer;
+  user-select:none;
+}
+
+th.sortable:hover{
+  background:#5c54d6;
+}
+
+tr:nth-child(even){
+  background:rgba(255,255,255,.05);
+}
+
+tr:hover{
+  background:rgba(192,132,252,.15);
+}
+
+.player{
+  text-align:left;
+  font-weight:900;
+}
+
+footer{
+  text-align:center;
+  padding:15px;
+  opacity:.5;
+  font-size:14px;
+}
+</style>
+</head>
+
+<body>
+<div class="overlay">
+
+<nav>
+<button type="button" onclick="window.location.href='../index.html'">Home</button>
+<button type="button" onclick="window.location.href='../prog/prog.html'">Schedule</button>
+<button type="button" onclick="window.location.href='survivor.html'">Survivor</button>
+<button type="button" onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
+<button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
+<button type="button" onclick="window.location.href='../pack/pack.html'">TM Pack</button>
+<button type="button" onclick="window.location.href='../maps/maps.html'">My Maps</button>
+<button type="button" onclick="window.location.href='../mapping/minuteur.html'">Mapping</button>
+</nav>
+
+
+<main>
+<h1>💀 Leaderboard</h1>
+
+<div class="search">
+  <input type="text" placeholder="🔍 Search player..." oninput="filterPlayers(this.value)">
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Joueur</th>
+      <th class="sortable" onclick="sortBy('t1')">Wins</th>
+      <th class="sortable" onclick="sortBy('t2')">Top 2</th>
+      <th class="sortable" onclick="sortBy('t3')">Top 3</th>
+      <th class="sortable" onclick="sortBy('t4')">Top 4</th>
+      <th class="sortable" onclick="sortBy('total')">Total</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+</main>
+
+<footer>Chacalou.com ©</footer>
+</div>
+
+<script>
+/* =========================
+   🔥 COLLE TON TEXTE ICI
+========================= */
+const RAW_DATA = `
+Joueur	Top 1	Top 2	Top 3	Top 4		Total
+						
+Eria	15	2	2	3	0	22
+Tunixx	9	5	6	5	0	25
+Tarpor	4	5	2	1	0	12
+Jozo	4	0	2	1	0	7
+Ice	5	5	2	2	0	14
+Fredwolf	3	2	1	1	0	7
+Nabla	4	4	3	3	0	14
+Heav	3	2	0	0	0	5
+Aluji	3	0	2	1	0	6
+Zypher	2	2	7	2	0	13
+Holo	2	0	3	0	0	5
+Viiper	2	4	1	2	0	9
+Nayko	4	2	0	0	0	6
+Bren	2	0	0	0	0	2
+Granady	2	1	0	2	0	5
+Cfil	2	0	1	0	0	3
+Purple	1	3	5	4	0	13
+Habe	1	1	1	1	0	4
+Kbabuser	1	2	1	1	0	5
+Ynos	6	4	4	6	0	20
+Zenke	1	1	0	0	0	2
+Yannex	1	1	0	0	0	2
+Speedself	1	0	1	0	0	2
+Sauucey	1	0	0	0	0	1
+Noodlewave	1	0	0	0	0	1
+Hayiom	1	0	0	0	0	1
+CptSalmon	1	0	1	0	0	2
+Jdon	1	0	0	1	0	2
+Softyd	1	0	0	0	0	1
+Snappie	1	1	0	0	0	2
+Andybaguette	1	0	0	0	0	1
+Lingo	1	0	0	0	0	1
+Arppa	1	0	0	0	0	1
+Vortex	1	1	1	1	0	4
+Sheinex	2	1	4	1	0	8
+Marius	0	3	1	9	0	13
+Denniss	0	2	2	3	0	7
+Langemann	0	2	3	2	0	7
+Amongus	0	0	0	3	0	3
+Fayeur9	0	1	1	3	0	5
+Toto	0	1	0	1	0	2
+Brinkenn	0	2	0	0	0	2
+Rotrex	0	1	0	1	0	2
+Gatito	0	2	0	0	0	2
+Krokzey	0	1	0	1	0	2
+Wirtual	0	3	1	1	0	5
+Bead	0	1	0	0	0	1
+Saabz	0	0	1	0	0	1
+Molle	0	0	1	0	0	1
+Liquid	0	0	1	1	0	2
+Quibz	0	0	1	1	0	2
+Fenrirc17	0	0	1	0	0	1
+Levonn	0	0	0	1	0	1
+Kandzsika	0	0	1	0	0	1
+Doyle	0	0	1	1	0	2
+Chamow	0	1	0	0	0	1
+Nuclearr	0	0	0	1	0	1
+Tekky	0	1	0	0	0	1
+Viinch	0	0	1	0	0	1
+Zentrian	0	0	0	1	0	1
+Golio	0	1	0	0	0	1
+Artisse	0	0	1	0	0	1
+Noby	0	0	3	0	0	3
+Undier	0	0	1	2	0	3
+Fatinho	0	0	2	1	0	3
+Braunsen	0	1	0	0	0	1
+Bolet	0	0	0	2	0	2
+Loupphok	0	1	0	0	0	1
+Bandj	0	1	2	0	0	3
+Lueces	0	0	0	1	0	1
+Tommy	0	1	2	0	0	3
+Owlsareverycool	0	0	0	1	0	1
+Tuduttuduu	0	1	1	0	0	2
+Naive	0	1	0	0	0	1
+AlexW	0	0	0	1	0	1
+Lars	0	0	0	1	0	1
+Nauu	0	0	1	0	0	1
+Warl	0	2	0	0	0	2
+Zeemuis	0	0	1	1	0	2
+Acrose	0	1	0	0	0	1
+Shadow	0	0	1	0	0	1
+Mime	0	1	0	0	0	1
+Gladavicom	0	1	0	1	0	2
+Doc	0	0	1	0	0	1
+Iprime	0	0	1	0	0	1
+Nitrofeint	0	0	0	1	0	1
+Woop	0	0	0	1	0	1
+Goldy	0	1	1	0	0	2
+Fontur	0	0	0	1	0	1
+Dunste	0	0	1	0	0	1
+Dracopho	0	1	1	1	0	3
+JetDarkTitan	0	1	0	0	0	1
+Novu	0	0	1	0	0	1
+Xiro	0	0	1	0	0	1
+Lyker	0	4	0	1	0	5
+Ziren	0	0	0	1	0	1
+Flow	0	1	0	0	0	1
+Ryhuax	0	0	1	0	0	1
+Frost	0	0	1	0	0	1
+Kama	0	0	1	0	0	1
+Choum	0	0	1	0	0	1
+Galenium	0	1	0	0	0	1
+`;
+
+/* ========================= */
+
+let players = [];
+let currentList = [];
+
+function parseRawData(){
+  const lines = RAW_DATA.trim().split("\n").slice(1);
+  players = [];
+
+  lines.forEach(line=>{
+    const c = line.split(/\t+/).map(v=>v.trim());
+    if(!c[0]) return;
+
+    players.push({
+      name: c[0],
+      t1: parseInt(c[1]) || 0,
+      t2: parseInt(c[2]) || 0,
+      t3: parseInt(c[3]) || 0,
+      t4: parseInt(c[4]) || 0,
+      total: parseInt(c[6]) || 0,
+      rank: 0
+    });
+  });
+
+  sortBy("t1", true);
+}
+
+function sortBy(key, initial=false){
+  currentList = [...players].sort((a,b)=>{
+    if(b[key] !== a[key]) return b[key] - a[key];
+    return b.total - a.total;
+  });
+
+  currentList.forEach((p,i)=>p.rank = i + 1);
+  render(currentList);
+}
+
+function render(list){
+  const tbody = document.getElementById("tbody");
+  tbody.innerHTML = "";
+
+  list.forEach(p=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.rank}</td>
+        <td class="player">${p.name}</td>
+        <td>${p.t1}</td>
+        <td>${p.t2}</td>
+        <td>${p.t3}</td>
+        <td>${p.t4}</td>
+        <td><b>${p.total}</b></td>
+      </tr>
+    `;
+  });
+}
+
+function filterPlayers(q){
+  q = q.toLowerCase();
+  render(currentList.filter(p=>p.name.toLowerCase().includes(q)));
+}
+
+document.addEventListener("DOMContentLoaded", parseRawData);
+</script>
+
+</body>
+</html>

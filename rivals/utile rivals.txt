@@ -1,0 +1,108 @@
+1:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  2:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  3:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  4:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]},
+  5:{1:[27,42,41,50,33,47],2:[41,50,36,47,40,31],3:[50,24,31,47,40,31,41],4:[34,50,40,42,35,17,23]}
+};
+
+
+La division 1 à un multiplicateur de x2
+La division 2 à un multiplicateur de x1.75
+La division 3 à un multiplicateur de x1.50
+La division 4 à un multiplicateur de x1.25
+
+Quand il y a x joueur dans la div, le premier fait x point, le deuxieme x-1, le troisieme x-2 etc.. Le classement finale calcule tout avec les multiplicateur selon chaque classement.
+
+🏁 Fonctionnement de la compétition
+🗺️ La map
+
+Toute la compétition se déroule sur une seule et même map, mappée par Chacalou.
+Cela garantit une parfaite égalité entre tous les joueurs : même tracé, mêmes conditions, même défi du début à la fin.
+
+⏱️ Phase de Seeding – 10 minutes
+
+La compétition débute par une phase de seeding de 10 minutes sur la map.
+
+Les joueurs roulent librement pendant 10 minutes
+
+Le meilleur temps réalisé est pris en compte
+
+À la fin du seeding, un classement général est établi
+
+Ce classement sert uniquement à répartir les joueurs dans les divisions pour le début de la compétition.
+
+🏆 Répartition des divisions
+
+À l’issue du seeding, les joueurs sont répartis en divisions équilibrées (Div 1, Div 2, Div 3, Div 4, etc.) selon leur classement.
+
+Les meilleurs temps vont en Div 1
+
+Puis les suivants en Div 2, Div 3, etc.
+
+Chaque division contient le même nombre de joueurs (sauf cas exceptionnel)
+
+🎮 Déroulement des matchs
+
+La compétition se joue sur 5 matchs au total.
+
+Chaque match se joue dans chaque division
+
+Un match = le premier joueur à atteindre 50 points
+
+Une fois les 50 points atteints, le match s’arrête immédiatement
+
+🔼 Montées & 🔽 Descentes
+
+À la fin de chaque match :
+
+Les meilleurs joueurs de chaque division montent dans la division supérieure
+
+Les derniers joueurs descendent dans la division inférieure
+
+Les joueurs du milieu restent dans leur division
+
+👉 Ce système permet un rééquilibrage permanent du niveau au fil des matchs.
+
+📊 Attribution des points & multiplicateurs
+
+À chaque match, les joueurs gagnent des points selon leur position finale dans la division où ils se trouvent à ce moment-là.
+
+Ces points sont ensuite pondérés par un multiplicateur dépendant de la division :
+
+🥇 Div 1 → multiplicateur x1.40
+
+🌸 Div 2 → multiplicateur x1.25
+
+🔵 Div 3 → multiplicateur x1.10
+
+🔴 Div 4 → multiplicateur x1.00
+
+👉 Plus vous jouez dans une division élevée, plus vos points comptent.
+
+Les points (après multiplicateur) sont additionnés sur les 5 matchs.
+
+🏅 Classement final
+
+À la fin du 5ᵉ et dernier match :
+
+Tous les points cumulés (multiplicateurs inclus) sont additionnés
+
+Un classement général final est établi
+
+Le joueur avec le plus grand total de points remporte la cup 🏆
+
+🎯 Résumé rapide
+
+🗺️ 1 seule map (Chacalou)
+
+⏱️ Seeding de 10 minutes
+
+🏆 Divisions équilibrées
+
+🎮 5 matchs (50 points pour gagner)
+
+🔼 Montées / 🔽 descentes
+
+✖️ Multiplicateur par division
+
+🧮 Classement final basé sur le total de points
