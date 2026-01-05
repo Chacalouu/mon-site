@@ -424,6 +424,8 @@ nav button:hover{ color:#c084fc; }
 <script>
 /* ========= CONFIG ========= */
 const MAX_PACKS_PER_DAY = 5;
+const BONUS_PACKS = 20;
+const BONUS_FLAG_KEY = "chacalou_bonus_20packs_v1";
 
 /* 🔴 PUT YOUR FULL LIST HERE */
 const PACK_IMAGES = [
@@ -1032,6 +1034,18 @@ function saveData(){
   localStorage.setItem("chacalou_pack_final", JSON.stringify(data));
 }
 
+/* ========= BONUS ========= */
+function applyGlobalBonus(){
+  const bonusAlreadyGiven = localStorage.getItem(BONUS_FLAG_KEY);
+
+  if(!bonusAlreadyGiven){
+    data.remaining += BONUS_PACKS;
+    localStorage.setItem(BONUS_FLAG_KEY, "true");
+    saveData();
+  }
+}
+
+
 /* ========= UI ========= */
 function updateRemaining(){
   remainingTxt.textContent = `Packs remaining today: ${data.remaining}/${MAX_PACKS_PER_DAY}`;
@@ -1287,6 +1301,7 @@ document.addEventListener("keydown", (e) => {
 });
 
 /* ========= INIT ========= */
+applyGlobalBonus();
 updateRemaining();
 renderInventory();
 
