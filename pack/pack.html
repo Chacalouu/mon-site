@@ -402,7 +402,8 @@ nav button:hover{ color:#c084fc; }
   <input id="search" type="text" placeholder="Search player...">
 <div style="margin-bottom:18px;">
   <label style="cursor:pointer; font-size:16px;">
-    <input type="checkbox" id="ownedOnly" style="margin-right:8px;">
+    <input type="checkbox" id="ownedOnly" checked style="margin-right:8px;">
+
     Show owned cards only
   </label>
 </div>
@@ -1075,7 +1076,7 @@ function renderInventory(){
     if(ownedOnly && !ownedSet.has(imgName)) continue;
 
     const img = document.createElement("img");
-    img.src = "/pack/images/" + imgName;
+    img.src = "images/" + imgName;
     img.loading = "lazy";
 
     if(ownedSet.has(imgName)) img.classList.add("owned");
@@ -1174,7 +1175,7 @@ ctx.textAlign = "center";
 
   for(let idx=0; idx<cards.length; idx++){
     try{
-      const img = await loadImage("/pack/images/" + cards[idx]);
+      const img = await loadImage("images/" + cards[idx]);
       ctx.drawImage(img, positions[idx].x, positions[idx].y, w, h);
     }catch{
       // si image carte introuvable
@@ -1270,7 +1271,7 @@ openBtn.onclick = () => {
     saveData();
 
     animationEl.style.display = "none";
-    resultDiv.innerHTML = `<img src="/pack/images/${card}" alt="${card}">`;
+    resultDiv.innerHTML = `<img src="images/${card}" alt="${card}">`;
 
     opening = false;
     openBtn.disabled = false;
@@ -1303,7 +1304,12 @@ document.addEventListener("keydown", (e) => {
 /* ========= INIT ========= */
 applyGlobalBonus();
 updateRemaining();
+
+// 🔒 affichage owned only par défaut
+ownedOnlyCheckbox.checked = true;
+
 renderInventory();
+
 
 searchInput.addEventListener("input", renderInventory);
 ownedOnlyCheckbox.addEventListener("change", renderInventory);
