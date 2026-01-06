@@ -8,19 +8,17 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 
+/* =========================
+   BACKGROUND
+========================= */
 body{
   min-height:100vh;
   background:url("../background.jpeg") center/cover no-repeat fixed;
   color:#fff;
 }
 
-html{
-  scrollbar-gutter: stable;
-}
-
-body{
-  overflow-y: scroll;
-}
+html{scrollbar-gutter:stable}
+body{overflow-y:scroll}
 
 .overlay{
   min-height:100vh;
@@ -28,7 +26,7 @@ body{
 }
 
 /* =========================
-   NAV
+   NAVBAR
 ========================= */
 nav{
   display:flex;
@@ -53,148 +51,96 @@ nav button:hover{
 }
 
 /* =========================
-   MAPS GRID
+   MAPS LIST
 ========================= */
-.maps-container{
+.maps-list-container{
   max-width:1300px;
   margin:60px auto;
   padding:0 20px;
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:30px;
 }
 
-.map-card{
-  position:relative;
-  height:280px;
+.maps-table{
+  width:100%;
+  border-collapse:collapse;
+  background:rgba(0,0,0,.55);
   border-radius:18px;
   overflow:hidden;
-  background:#111;
   box-shadow:0 10px 30px rgba(0,0,0,.6);
 }
 
-.map-title{
-  position:absolute;
-  top:14px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:5;
-  font-size:35px;
-  font-weight:800;
-  text-shadow:0 4px 12px rgba(0,0,0,.9);
+.maps-table thead{
+  background:rgba(192,132,252,.18);
 }
 
-.map-subtitle{
-  position:absolute;
-  top:58px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:5;
-  font-size:20px;
-  color:#e9d5ff;
-  text-shadow:0 2px 8px rgba(0,0,0,.8);
-  white-space:nowrap;
+.maps-table th{
+  padding:16px;
+  font-size:14px;
+  text-transform:uppercase;
+  text-align:center;
 }
 
-.map-card img{
-  width:100%;
-  height:100%;
+.maps-table td{
+  padding:14px;
+  text-align:center;
+  border-top:1px solid rgba(255,255,255,.1);
+}
+
+.map-img{
+  width:130px;
+  height:70px;
   object-fit:cover;
-  transition:transform .4s ease;
-  opacity:.3;
+  border-radius:12px;
 }
 
-.map-card:hover img{
-  transform:scale(1.08);
+.wr{
+  font-weight:700;
 }
 
-.map-overlay{
-  position:absolute;
-  inset:0;
-  background:linear-gradient(to top, rgba(0,0,0,.9), rgba(0,0,0,.15));
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-end;
-  padding:15px;
-  gap:10px;
+.wr span{
+  display:block;
+  font-size:13px;
+  opacity:.7;
 }
 
 /* =========================
-   BOUTONS
+   BUTTONS
 ========================= */
-.btn{
-  align-self:center;
-  padding:12px 28px;
-  font-size:16px;
-  font-weight:700;
-  border:none;
-  border-radius:999px;
-  cursor:pointer;
-  transition:.25s;
-  text-decoration:none;
-  display:inline-block;
-}
-
-.play-btn{
+.tmio-btn{
   background:#c084fc;
   color:#000;
+  padding:8px 18px;
+  border-radius:999px;
+  font-weight:800;
+  text-decoration:none;
+  display:inline-block;
+  transition:.25s;
 }
 
-.play-btn:hover{
+.tmio-btn:hover{
   background:#e9d5ff;
   transform:scale(1.05);
 }
 
-.rank-btn{
-  background:rgba(255,255,255,.15);
-  color:#fff;
-  border:1px solid rgba(255,255,255,.25);
-}
-
-.rank-btn:hover{
-  background:rgba(192,132,252,.35);
-}
-
 /* =========================
-   MODAL CLASSEMENT
+   RESPONSIVE
 ========================= */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.75);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
+@media(max-width:900px){
+  .maps-table thead{
+    display:none;
+  }
 
-.modal-content{
-  position:relative;
-  width:90%;
-  max-width:900px;
-  height:520px;
-  background:#000;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 0 40px rgba(192,132,252,.6);
-}
+  .maps-table tr{
+    display:block;
+    margin-bottom:25px;
+    border-bottom:2px solid rgba(255,255,255,.1);
+  }
 
-.close-btn{
-  position:absolute;
-  top:10px;
-  right:16px;
-  z-index:10;
-  background:none;
-  border:none;
-  color:#fff;
-  font-size:28px;
-  cursor:pointer;
-}
-
-.tm-iframe{
-  width:100%;
-  height:100%;
-  border:none;
+  .maps-table td{
+    display:block;
+    text-align:center;
+    padding:10px;
+    border:none;
+  }
 }
 
 /* =========================
@@ -208,124 +154,100 @@ nav button:hover{
   font-size:14px;
   opacity:.6;
 }
-
-@media(max-width:1000px){
-  .maps-container{grid-template-columns:repeat(2,1fr);}
-}
-
-@media(max-width:600px){
-  .maps-container{grid-template-columns:1fr;}
-}
 </style>
 </head>
 
 <body>
 <div class="overlay">
 
+<!-- =========================
+     NAV
+========================= -->
 <nav>
-<button type="button" onclick="window.location.href='../index.html'">Home</button>
-<button type="button" onclick="window.location.href='../prog/prog.html'">Schedule</button>
-<button type="button" onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
-<button type="button" onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
-<button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
-<button type="button" onclick="window.location.href='../pack/pack.html'">TM Pack</button>
-<button type="button" onclick="window.location.href='maps.html'">My Maps</button>
-<button type="button" onclick="window.location.href='../mapping/minuteur.html'">Mapping</button>
-
+  <button onclick="location.href='../index.html'">Home</button>
+  <button onclick="location.href='../prog/prog.html'">Schedule</button>
+  <button onclick="location.href='../survivor/survivor.html'">Survivor</button>
+  <button onclick="location.href='../twenty/twenty.html'">Twenty</button>
+  <button onclick="location.href='../rivals/index.html'">Rivals</button>
+  <button onclick="location.href='../pack/pack.html'">TM Pack</button>
+  <button onclick="location.href='maps.html'">My Maps</button>
+  <button onclick="location.href='../mapping/minuteur.html'">Mapping</button>
 </nav>
 
-<div class="maps-container">
-
-<!-- 1. SUPERLIME -->
-<div class="map-card">
-  <div class="map-title">Superlime</div>
-  <img src="map1.jpg">
-  <div class="map-overlay">
-    <a class="btn play-btn"
-       href="https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/57edW4Ays1vWROlFgaL_DZFv2Ch"
-       target="_blank">▶️ Play</a>
-
-    <button class="btn rank-btn"
-      onclick="openClassement('https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/57edW4Ays1vWROlFgaL_DZFv2Ch')">
-      🏆 Show Leaderboard
-    </button>
-  </div>
-</div>
-
-<!-- 2. BLACKPINK -->
-<div class="map-card">
-  <div class="map-title">BlackPink</div>
-  <div class="map-subtitle">ft Iesauka</div>
-  <img src="map2.jpg">
-  <div class="map-overlay">
-    <a class="btn play-btn"
-       href="https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/RTaXCOB2sZkBfa4Tq8BmJL2vYB0"
-       target="_blank">▶️ Play</a>
-
-    <button class="btn rank-btn"
-      onclick="openClassement('https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/RTaXCOB2sZkBfa4Tq8BmJL2vYB0')">
-      🏆 Show Leaderboard
-    </button>
-  </div>
-</div>
-
-<!-- 3. HORIZON -->
-<div class="map-card">
-  <div class="map-title">Horizon</div>
-  <img src="map3.jpg">
-</div>
-
-<!-- 4. POLARIS -->
-<div class="map-card">
-  <div class="map-title">Polaris</div>
-  <img src="map4.jpg">
-</div>
-
-<!-- 5. OUF -->
-<div class="map-card">
-  <div class="map-title">Ouf</div>
-  <div class="map-subtitle">ft Fatinho</div>
-  <img src="map5.jpg">
-  <div class="map-overlay">
-    <a class="btn play-btn"
-       href="https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/byU5KznVrR_JVHFFiVBCQFH_eCl"
-       target="_blank">▶️ Play</a>
-
-    <button class="btn rank-btn"
-      onclick="openClassement('https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/byU5KznVrR_JVHFFiVBCQFH_eCl')">
-      🏆 Show Leaderboard
-    </button>
-  </div>
-</div>
-
-<!-- 6. PANDROVA -->
-<div class="map-card">
-  <div class="map-title">Pandrova</div>
-  <img src="map6.jpg">
-</div>
-
+<!-- =========================
+     MAPS LIST
+========================= -->
+<div class="maps-list-container">
+  <table class="maps-table">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Nom</th>
+        <th>Thème</th>
+        <th>WR</th>
+        <th>Trackmania.io</th>
+      </tr>
+    </thead>
+    <tbody id="mapsBody"></tbody>
+  </table>
 </div>
 
 <footer class="footer">Chacalou.com ©</footer>
-</div>
 
-<!-- MODAL -->
-<div id="classement-modal" class="modal" onclick="closeClassement()">
-  <div class="modal-content" onclick="event.stopPropagation()">
-    <button class="close-btn" onclick="closeClassement()">✕</button>
-    <iframe id="classement-iframe" class="tm-iframe"></iframe>
-  </div>
 </div>
 
 <script>
-function openClassement(url){
-  document.getElementById("classement-iframe").src = url;
-  document.getElementById("classement-modal").style.display = "flex";
-}
-function closeClassement(){
-  document.getElementById("classement-modal").style.display = "none";
-  document.getElementById("classement-iframe").src = "";
-}
+/* =========================
+   MAPS CONFIG (EDIT THIS)
+========================= */
+const mapsData = [
+  {
+    name: "Superlime",
+    theme: "Tech / Speed",
+    image: "map1.jpg",
+    wr: "0:40.295",
+    players: ["Senjojoveller"],
+    tmio: "https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/57edW4Ays1vWROlFgaL_DZFv2Ch"
+  },
+  {
+    name: "BlackPink (ft. Iesauka)",
+    theme: "FullSpeed",
+    image: "map2.jpg",
+    wr: "0:47.315",
+    players: ["Kunz.."],
+    tmio: "https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/RTaXCOB2sZkBfa4Tq8BmJL2vYB0"
+  },
+  {
+    name: "Ouf (ft Fatinho)",
+    theme: "LOL / Tech",
+    image: "map5.jpg",
+    wr: "0:41.155",
+    players: ["saabz.."],
+    tmio: "https://trackmania.io/#/campaigns/leaderboard/NLS-sU3kSCfyzkD5CNHLOhiyhoG8MyELKbood5J/byU5KznVrR_JVHFFiVBCQFH_eCl"
+  }
+];
+
+/* =========================
+   RENDER
+========================= */
+const body = document.getElementById("mapsBody");
+
+mapsData.forEach(map=>{
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><img class="map-img" src="${map.image}" alt="${map.name}"></td>
+    <td>${map.name}</td>
+    <td>${map.theme}</td>
+    <td class="wr">
+      ${map.wr}
+      <span>${map.players.join(", ")}</span>
+    </td>
+    <td>
+      <a class="tmio-btn" href="${map.tmio}" target="_blank">Leaderboard</a>
+    </td>
+  `;
+  body.appendChild(tr);
+});
 </script>
 
 </body>

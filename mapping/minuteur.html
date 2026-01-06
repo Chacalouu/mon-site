@@ -9,14 +9,13 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 
 /* =========================
-   BACKGROUND + OVERLAY
+   BACKGROUND
 ========================= */
 body{
   min-height:100vh;
   background:url("../background.jpeg") center/cover no-repeat fixed;
   color:#fff;
 }
-
 html{scrollbar-gutter:stable}
 body{overflow-y:scroll}
 
@@ -36,35 +35,59 @@ nav{
   background:rgba(0,0,0,.6);
   backdrop-filter:blur(6px);
 }
-
 nav button{
   background:none;
   border:none;
   color:#fff;
   font-size:32px;
-  font-weight:normal;
+  font-weight:normal; /* ✅ important: pas gras */
   cursor:pointer;
   padding:15px 14px;
 }
-
 nav button:hover{color:#c084fc}
 
 /* =========================
-   CENTRAGE
+   CENTERING
 ========================= */
 .container-wrapper{
   min-height:calc(100vh - 72px);
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   padding:40px 20px;
 }
-
 .container{
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:16px;
+}
+
+/* =========================
+   BUTTONS GLOBAL
+========================= */
+button{
+  padding:12px 22px;
+  font-size:16px;
+  font-weight:900;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  background:#1db954;
+  color:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.2);
+}
+.pause{background:#ffb300;color:#000}
+.reset{background:#e53935}
+.draw{background:#191fd2}
+button:disabled{opacity:.5;cursor:not-allowed}
+
+/* =========================
+   DRAW POSITION
+========================= */
+.draw-wrapper{
+  display:flex;
+  justify-content:center;
 }
 
 /* =========================
@@ -80,30 +103,20 @@ nav button:hover{color:#c084fc}
   flex-direction:column;
   align-items:center;
 }
-
 .draw-result{
-  color:#fff;
   font-size:45px;
   font-weight:900;
   text-align:center;
-  line-height:1.2;
-  text-shadow:0 4px 12px rgba(0,0,0,.55);
 }
-
 .timer{
-  color:#fff;
   font-size:80px;
   font-weight:900;
-  letter-spacing:3px;
   margin-top:-18px;
-  text-shadow:0 6px 18px rgba(0,0,0,.6);
 }
-
 .timer.alert{
   color:#ff2b2b;
   animation:blink .8s infinite;
 }
-
 @keyframes blink{
   0%{opacity:1}
   50%{opacity:.3}
@@ -126,32 +139,47 @@ input{
 }
 
 /* =========================
-   BUTTONS
+   BUTTON GROUP
 ========================= */
 .buttons{
   display:flex;
   gap:10px;
-  flex-wrap:wrap;
-  justify-content:center
+  justify-content:center;
 }
 
-.buttons button{
-  padding:12px 22px;
-  font-size:16px;
+/* =========================
+   THEMES LIST
+========================= */
+.themes-box{
+  width:520px;
+  background:rgba(0,0,0,.45);
+  border-radius:20px;
+  padding:16px 18px;
+  box-shadow:0 10px 28px rgba(0,0,0,.25);
+}
+.themes-title{
   font-weight:900;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  background:#1db954;
-  color:#fff;
-  box-shadow:0 6px 16px rgba(0,0,0,.2);
+  font-size:18px;
+  text-align:center;
+  margin-bottom:12px;
 }
-
-.pause{background:#ffb300;color:#000}
-.reset{background:#e53935}
-.draw{background:#1976d2}
-.buttons button:disabled{opacity:.5;cursor:not-allowed}
-
+.themes-list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:8px 12px;
+  max-height:260px;
+  overflow-y:auto;
+}
+.theme-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:14px;
+  font-weight:700;
+}
+.theme-item input{
+  accent-color:#1db954;
+}
 .footer{
   position:fixed;
   bottom:12px;
@@ -159,7 +187,6 @@ input{
   text-align:center;
   font-size:14px;
   opacity:.6;
-  pointer-events:none;
 }
 </style>
 </head>
@@ -168,39 +195,56 @@ input{
 <div class="overlay">
 
 <nav>
-  <button type="button" onclick="window.location.href='../index.html'">Home</button>
-  <button type="button" onclick="window.location.href='../prog/prog.html'">Schedule</button>
-  <button type="button" onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
-  <button type="button" onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
-  <button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
-  <button type="button" onclick="window.location.href='../pack/pack.html'">TM Pack</button>
-  <button type="button" onclick="window.location.href='../maps/maps.html'">My Maps</button>
-  <button type="button" onclick="window.location.href='mapping/minuteur.html'">Mapping</button>
+  <button onclick="location.href='../index.html'">Home</button>
+  <button onclick="location.href='../prog/prog.html'">Schedule</button>
+  <button onclick="location.href='../survivor/survivor.html'">Survivor</button>
+  <button onclick="location.href='../twenty/twenty.html'">Twenty</button>
+  <button onclick="location.href='../rivals/index.html'">Rivals</button>
+  <button onclick="location.href='../pack/pack.html'">TM Pack</button>
+  <button onclick="location.href='../maps/maps.html'">My Maps</button>
+  <button onclick="location.href='minuteur.html'">Mapping</button>
 </nav>
 
 <div class="container-wrapper">
-  <div class="container">
+<div class="container">
 
-    <div class="green-box">
-      <div class="draw-result" id="drawResult">Theme</div>
-      <div class="timer" id="timer">15:00</div>
-    </div>
+<!-- DRAW -->
+<div class="draw-wrapper">
+  <button id="draw" class="draw">Draw a theme</button>
+</div>
 
-    <div class="controls">
-      <label>Minutes</label>
-      <input type="number" id="minutes" value="15" min="0">
-      <label>Seconds</label>
-      <input type="number" id="seconds" value="0" min="0" max="59">
-    </div>
+<!-- GREEN BOX -->
+<div class="green-box">
+  <div class="draw-result" id="drawResult">Theme</div>
+  <div class="timer" id="timer">15:00</div>
+</div>
 
-    <div class="buttons">
-      <button id="start">Start</button>
-      <button id="pause" class="pause" disabled>Pause</button>
-      <button id="reset" class="reset" disabled>Reset</button>
-      <button id="draw" class="draw">Draw</button>
-    </div>
+<!-- CONTROLS -->
+<div class="controls">
+  <label>Minutes</label>
+  <input type="number" id="minutes" value="15" min="0">
+  <label>Seconds</label>
+  <input type="number" id="seconds" value="0" min="0" max="59">
+</div>
 
-  </div>
+<!-- TIMER BUTTONS -->
+<div class="buttons">
+  <button id="start">Start</button>
+  <button id="pause" class="pause" disabled>Pause</button>
+  <button id="reset" class="reset" disabled>Reset</button>
+</div>
+
+<!-- THEMES -->
+<div class="themes-box">
+  <div class="themes-title">Available Themes</div>
+  <div class="themes-list" id="themesList"></div>
+</div>
+
+</div>
+</div>
+
+<footer class="footer">Chacalou.com ©</footer>
+
 </div>
 
 <script>
@@ -212,15 +256,12 @@ function unlockAudio(){
 }
 function playAlert(){
   if(!audioCtx) return;
-  const now=audioCtx.currentTime;
   const o=audioCtx.createOscillator();
   const g=audioCtx.createGain();
-  o.type="sine"; o.frequency.value=880;
-  g.gain.setValueAtTime(0.0001,now);
-  g.gain.linearRampToValueAtTime(0.18,now+.02);
-  g.gain.linearRampToValueAtTime(0.0001,now+.25);
+  o.frequency.value=880;
+  g.gain.value=.15;
   o.connect(g); g.connect(audioCtx.destination);
-  o.start(); o.stop(now+.3);
+  o.start(); o.stop(audioCtx.currentTime+.25);
 }
 
 /* ===== TIMER ===== */
@@ -239,17 +280,13 @@ function render(){
     String(Math.floor(time/60)).padStart(2,"0")+":"+
     String(time%60).padStart(2,"0");
 }
-
 function finish(){
   clearInterval(interval);
   interval=null;
-  time=0;
-  render();
   timerEl.classList.add("alert");
   playAlert();
   minEl.disabled=secEl.disabled=false;
 }
-
 startBtn.onclick=()=>{
   unlockAudio();
   if(interval) return;
@@ -259,41 +296,25 @@ startBtn.onclick=()=>{
   render();
   minEl.disabled=secEl.disabled=true;
   pauseBtn.disabled=resetBtn.disabled=false;
-  pauseBtn.textContent="Pause";
   interval=setInterval(()=>{
     time--;
     render();
     if(time<=0) finish();
   },1000);
 };
-
 pauseBtn.onclick=()=>{
-  unlockAudio();
-  if(interval){
-    clearInterval(interval);
-    interval=null;
-    pauseBtn.textContent="Resume";
-  }else if(time>0){
-    pauseBtn.textContent="Pause";
-    interval=setInterval(()=>{
-      time--;
-      render();
-      if(time<=0) finish();
-    },1000);
-  }
+  if(interval){clearInterval(interval);interval=null;pauseBtn.textContent="Resume";}
+  else{pauseBtn.textContent="Pause";interval=setInterval(()=>{time--;render();if(time<=0)finish();},1000);}
 };
-
 resetBtn.onclick=()=>{
-  clearInterval(interval);
-  interval=null;
-  time=(+minEl.value*60)+(+secEl.value);
+  clearInterval(interval);interval=null;
   timerEl.classList.remove("alert");
+  time=(+minEl.value*60)+(+secEl.value);
   render();
   minEl.disabled=secEl.disabled=false;
-  pauseBtn.textContent="Pause";
 };
 
-/* ===== THEMES (ENGLISH) ===== */
+/* ===== THEMES ===== */
 const themes=[
 "Classic Tech","Auto-drift Tech","Transitional Tech","Speedtech",
 "Mixed 2 Surfaces","Mixed 3 Surfaces","Mixed 4 Surfaces",
@@ -316,26 +337,44 @@ const themes=[
 "Back & Forth Map","One-shot Mapping","Moving Blocks"
 ];
 
+/* ===== THEMES CHECKLIST ===== */
+const themesListEl=document.getElementById("themesList");
+themes.forEach(t=>{
+  const label=document.createElement("label");
+  label.className="theme-item";
+  const cb=document.createElement("input");
+  cb.type="checkbox";
+  cb.checked=true;
+  cb.dataset.theme=t;
+  label.append(cb,t);
+  themesListEl.appendChild(label);
+});
+
+/* ===== DRAW ===== */
 const drawBtn=document.getElementById("draw");
 const drawResult=document.getElementById("drawResult");
 
 drawBtn.onclick=()=>{
-  let elapsed=0;
+  const enabled=[...document.querySelectorAll(".theme-item input:checked")]
+    .map(cb=>cb.dataset.theme);
+
+  if(!enabled.length){
+    drawResult.textContent="No theme selected!";
+    return;
+  }
+
   drawBtn.disabled=true;
+  let elapsed=0;
   const shuffle=setInterval(()=>{
-    drawResult.textContent=themes[Math.floor(Math.random()*themes.length)];
+    drawResult.textContent=enabled[Math.floor(Math.random()*enabled.length)];
     elapsed+=100;
     if(elapsed>=5000){
       clearInterval(shuffle);
-      drawResult.textContent=themes[Math.floor(Math.random()*themes.length)];
+      drawResult.textContent=enabled[Math.floor(Math.random()*enabled.length)];
       drawBtn.disabled=false;
     }
   },100);
 };
 </script>
-
-<footer class="footer">Chacalou.com ©</footer>
-
-</div>
 </body>
 </html>

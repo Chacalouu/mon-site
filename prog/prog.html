@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>📅 Schedule</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+:root{
+  --violet:#c084fc;
+  --violet-soft:rgba(192,132,252,.18);
+  --bg-card:rgba(20,20,30,.55);
+  --border:rgba(255,255,255,.08);
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,Helvetica,sans-serif;
+}
 
 body{
   min-height:100vh;
@@ -14,17 +26,9 @@ body{
   color:#fff;
 }
 
-html{
-  scrollbar-gutter: stable;
-}
-
-body{
-  overflow-y: scroll;
-}
-
 .overlay{
   min-height:100vh;
-  background:rgba(0,0,0,.65);
+  background:rgba(0,0,0,.72);
 }
 
 /* ================= NAV ================= */
@@ -42,7 +46,6 @@ nav button{
   border:none;
   color:#fff;
   font-size:32px;
-  font-weight:normal;
   cursor:pointer;
   padding:15px 14px;
 }
@@ -51,74 +54,123 @@ nav button:hover{
   color:#c084fc;
 }
 
-/* ================= CALENDAR ================= */
-.calendar-wrapper{
-  max-width:1100px;
-  margin:60px auto 40px;
-  padding:30px;
-  background:rgba(0,0,0,.55);
-  border-radius:20px;
-  backdrop-filter:blur(8px);
+/* ================= WEEK CONTAINER ================= */
+.week-wrapper{
+  max-width:1200px;
+  margin:60px auto;
+  padding:32px;
+  background:var(--bg-card);
+  border-radius:26px;
+  backdrop-filter:blur(14px);
+  border:1px solid var(--border);
 }
 
-.calendar-header{
+/* ================= HEADER ================= */
+.week-header{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-bottom:25px;
+  margin-bottom:28px;
 }
 
-.calendar-header h2{
+.week-header h2{
   font-size:32px;
   font-weight:normal;
 }
 
-.calendar-header button{
-  background:none;
-  border:1px solid #c084fc;
-  color:#c084fc;
-  font-size:18px;
-  padding:8px 14px;
-  border-radius:10px;
+.week-header button{
+  background:var(--violet-soft);
+  border:1px solid var(--violet);
+  color:var(--violet);
+  padding:8px 18px;
+  border-radius:14px;
   cursor:pointer;
 }
 
-.calendar-header button:hover{
-  background:#c084fc;
+.week-header button:hover{
+  background:var(--violet);
   color:#000;
 }
 
-.weekdays, .days{
+/* ================= GRID ================= */
+.week-grid{
   display:grid;
   grid-template-columns:repeat(7,1fr);
+  gap:18px;
 }
 
-.weekdays div{
-  text-align:center;
-  padding:10px 0;
-  opacity:.6;
+/* ================= DAY ================= */
+.day-card{
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:14px;
+  min-height:230px;
+}
+
+.day-title{
   font-size:14px;
+  opacity:.65;
+  margin-bottom:10px;
 }
 
-.day{
-  min-height:120px;
-  border:1px solid rgba(255,255,255,.08);
-  padding:8px;
-  position:relative;
+/* ================= EVENT ================= */
+.event-card{
+  background:rgba(192,132,252,.12);
+  border:1px solid rgba(192,132,252,.35);
+  border-radius:14px;
+  overflow:hidden;
+  margin-bottom:10px;
 }
 
-.day-number{
-  font-size:14px;
-  opacity:.6;
+.event-card img{
+  width:100%;
+  height:70px;
+  object-fit:cover;
+  opacity:.85;
 }
 
-.event{
-  margin-top:6px;
-  background:#c084fc;
+.event-content{
+  padding:10px;
+}
+
+.event-title{
+  font-size:13px;
+  font-weight:bold;
+}
+
+.event-time{
+  font-size:11px;
+  opacity:.7;
+  margin-top:4px;
+}
+
+/* ================= TODAY HIGHLIGHT ================= */
+.day-card.today{
+  background:linear-gradient(
+    180deg,
+    rgba(192,132,252,.22),
+    rgba(255,255,255,.03)
+  );
+  border:2px solid var(--violet);
+  box-shadow:0 0 18px rgba(192,132,252,.45);
+  transform:translateY(-2px);
+}
+
+.day-card.today .day-title{
+  color:var(--violet);
+  font-weight:bold;
+  opacity:1;
+}
+
+.today-badge{
+  display:inline-block;
+  background:var(--violet);
   color:#000;
-  padding:4px 6px;
-  border-radius:6px;
-  font-size:12px;
+  font-size:10px;
+  padding:3px 8px;
+  border-radius:999px;
+  margin-left:6px;
 }
 
 /* ================= FOOTER ================= */
@@ -128,31 +180,8 @@ nav button:hover{
   width:100%;
   text-align:center;
   font-size:14px;
-  opacity:0.6;
-  color:#fff;
-  pointer-events:none;
+  opacity:.6;
 }
-
-/* COULEURS PLANNING */
-
-.event.red{background:#ef4444}
-.event.violet{background:#c084fc}
-.event.blue{background:#3b82f6}
-.event.green{background:#22c55e}
-.event.orange{background:#f97316}
-.event.yellow{background:#eab308}
-
-.event-time{
-  margin-top:4px;
-  font-size:11px;
-  opacity:.85;
-  background:rgba(0,0,0,.35);
-  padding:2px 6px;
-  border-radius:6px;
-  width:fit-content;
-}
-
-
 </style>
 </head>
 
@@ -160,129 +189,124 @@ nav button:hover{
 <div class="overlay">
 
 <nav>
-<button type="button" onclick="window.location.href='../index.html'">Home</button>
-<button type="button" onclick="window.location.href='prog.html'">Schedule</button>
-<button type="button" onclick="window.location.href='../survivor/survivor.html'">Survivor</button>
-<button type="button" onclick="window.location.href='../twenty/twenty.html'">Twenty</button>
-<button type="button" onclick="window.location.href='../rivals/index.html'">Rivals</button>
-<button type="button" onclick="window.location.href='../pack/pack.html'">TM Pack</button>
-<button type="button" onclick="window.location.href='../maps/maps.html'">My Maps</button>
-<button type="button" onclick="window.location.href='../mapping/minuteur.html'">Mapping</button>
-
+  <button onclick="location.href='../index.html'">Home</button>
+  <button onclick="location.href='prog.html'">Schedule</button>
+  <button onclick="location.href='../survivor/survivor.html'">Survivor</button>
+  <button onclick="location.href='../twenty/twenty.html'">Twenty</button>
+  <button onclick="location.href='../rivals/index.html'">Rivals</button>
+  <button onclick="location.href='../pack/pack.html'">TM Pack</button>
+  <button onclick="location.href='../maps/maps.html'">My Maps</button>
+  <button onclick="location.href='../mapping/minuteur.html'">Mapping</button>
 </nav>
 
-<div class="calendar-wrapper">
-  <div class="calendar-header">
-    <button onclick="changeMonth(-1)">◀</button>
-    <h2 id="monthTitle"></h2>
-    <button onclick="changeMonth(1)">▶</button>
+<div class="week-wrapper">
+  <div class="week-header">
+    <button onclick="changeWeek(-1)">◀</button>
+    <h2 id="weekTitle"></h2>
+    <button onclick="changeWeek(1)">▶</button>
   </div>
 
-  <div class="weekdays">
-    <div>Mon</div><div>Tue</div><div>Wed</div>
-    <div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-  </div>
-
-  <div class="days" id="calendarDays"></div>
+  <div class="week-grid" id="weekGrid"></div>
 </div>
 
-<footer class="footer">
-  Chacalou.com ©
-</footer>
-
+<footer class="footer">Chacalou.com ©</footer>
 </div>
 
 <script>
 /* ================= EVENTS ================= */
-/* AJOUTE TES EVENTS ICI */
 const events = {
-  "2026-01-01": ["HAPPY NEW YEAR !!|0:00:blue"],
-  "2026-01-13": ["Life Cup & Mapping|21:00:green"],
-  "2026-01-12": ["Twenty is Back !|20:20:yellow"],
-  "2026-01-14": ["Survivor is Back !|21:00:red","Speedmapping!|22:00:orange"],
-  "2026-01-15": ["NEW CUP ! Rivals|21:00:purple"],
-  "2026-01-19": ["Twenty S7 E2|20:20:yellow"],
-  "2026-01-21": ["Survivor S7 E2|21:00:red"],
-  "2026-01-22": ["Rivals S1 E2|21:00:purple"],
-  "2026-01-26": ["Twenty S7 E2|20:20:yellow"],
-  "2026-01-28": ["Survivor S7 E2|21:00:red"],
-  "2026-01-29": ["Rivals S1 E2|21:00:purple"]
+  "2026-01-12": ["Twenty is Back ! S8E01|20:20","Speedmapping|21:00"],
+  "2026-01-13": ["Speedmapping|21:00"],
+  "2026-01-14": ["Survivor is Back ! S8E01|21:00","Speedmapping!|22:00"],
+  "2026-01-15": ["NEW CUP ! Rivals|21:00"],
+  "2026-01-19": ["Twenty! S8 E02|20:20"],
+  "2026-01-21": ["Survivor! S8 E02|21:00"],
+  "2026-01-22": ["Rivals S1 E02|21:00"]
 };
 
-/* ================= CALENDAR LOGIC ================= */
-let currentMonth = 0; // Janvier
-let currentYear = 2026;
+function getEventImage(text){
+  text=text.toLowerCase();
+  if(text.includes("survivor")) return "survivor.png";
+  if(text.includes("twenty")) return "twenty.png";
+  if(text.includes("rivals")) return "rivals.png";
+  if(text.includes("mapping")) return "mapping.png";
+  return null;
+}
 
-const monthNames = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December"
-];
+let currentDate = new Date("2026-01-12");
 
-function renderCalendar(){
-  const daysContainer = document.getElementById("calendarDays");
-  daysContainer.innerHTML = "";
+function startOfWeek(d){
+  const date=new Date(d);
+  const day=date.getDay()||7;
+  date.setDate(date.getDate()-day+1);
+  return date;
+}
 
-  document.getElementById("monthTitle").innerText =
-    monthNames[currentMonth] + " " + currentYear;
+function renderWeek(){
+  const grid=document.getElementById("weekGrid");
+  grid.innerHTML="";
 
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay() || 7;
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const start=startOfWeek(currentDate);
+  const end=new Date(start);
+  end.setDate(start.getDate()+6);
 
-  for(let i=1;i<firstDay;i++){
-    daysContainer.innerHTML += `<div class="day"></div>`;
-  }
+  document.getElementById("weekTitle").innerText =
+    start.toLocaleDateString("en-GB",{day:"2-digit",month:"short"})+
+    " → "+
+    end.toLocaleDateString("en-GB",{day:"2-digit",month:"short"});
 
-  for(let day=1;day<=daysInMonth;day++){
-    const dateKey = `${currentYear}-${String(currentMonth+1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-    let eventHTML = "";
+  const today=new Date();
 
-    if(events[dateKey]){
-      events[dateKey].forEach(e=>{
-  let label = e;
-  let time = "";
-  let color = "violet"; // défaut
+  for(let i=0;i<7;i++){
+    const d=new Date(start);
+    d.setDate(start.getDate()+i);
 
-  // Séparation nom | reste
-  if(e.includes("|")){
-    const parts = e.split("|");
-    label = parts[0];
+    const key =
+      d.getFullYear()+"-"+
+      String(d.getMonth()+1).padStart(2,"0")+"-"+
+      String(d.getDate()).padStart(2,"0");
 
-    const details = parts[1].split(":");
-    time = details[0] + ":" + details[1];
-    color = details[2] || "violet";
-  }
+    const isToday =
+      d.getFullYear()===today.getFullYear() &&
+      d.getMonth()===today.getMonth() &&
+      d.getDate()===today.getDate();
 
-  eventHTML += `
-    <div class="event ${color}">${label}</div>
-    ${time ? `<div class="event-time">${time}</div>` : ""}
-  `;
-});
+    let html="";
 
-
+    if(events[key]){
+      events[key].forEach(e=>{
+        const [title,time]=e.split("|");
+        const img=getEventImage(title);
+        html+=`
+          <div class="event-card">
+            ${img?`<img src="${img}">`:""}
+            <div class="event-content">
+              <div class="event-title">${title}</div>
+              <div class="event-time">${time}</div>
+            </div>
+          </div>
+        `;
+      });
     }
 
-    daysContainer.innerHTML += `
-      <div class="day">
-        <div class="day-number">${day}</div>
-        ${eventHTML}
-      </div>`;
+    grid.innerHTML+=`
+      <div class="day-card ${isToday?"today":""}">
+        <div class="day-title">
+          ${d.toLocaleDateString("en-GB",{weekday:"long",day:"numeric"})}
+          ${isToday?`<span class="today-badge">TODAY</span>`:""}
+        </div>
+        ${html||"<div style='opacity:.3;font-size:12px'>—</div>"}
+      </div>
+    `;
   }
 }
 
-function changeMonth(delta){
-  currentMonth += delta;
-  if(currentMonth < 0){
-    currentMonth = 11;
-    currentYear--;
-  }
-  if(currentMonth > 11){
-    currentMonth = 0;
-    currentYear++;
-  }
-  renderCalendar();
+function changeWeek(delta){
+  currentDate.setDate(currentDate.getDate()+delta*7);
+  renderWeek();
 }
 
-renderCalendar();
+renderWeek();
 </script>
 
 </body>
