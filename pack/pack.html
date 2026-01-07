@@ -77,26 +77,49 @@ nav button:hover{ color:#c084fc; }
   font-size:25px;
 }
 
-/* ===== ANIMATION ===== */
+/* ===== PACK ROULETTE (CSGO STYLE) ===== */
 #animation{
   display:none;
-  margin:26px auto 0;
+  margin:30px auto 0;
+  width:100%;
+  max-width:900px;
+  overflow:hidden;
+  position:relative;
 }
 
-.loader{
-  width:95px;
-  height:95px;
-  border-radius:50%;
-  border:6px solid rgba(255,255,255,.18);
-  border-top:6px solid #a855f7;
-  animation:spin 1s linear infinite;
+.roulette{
   display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto;
-  font-size:28px;
-  font-weight:bold;
+  gap:14px;
+  will-change: transform;
 }
+
+.roulette img{
+  width:140px;
+  flex-shrink:0;
+  border-radius:10px;
+  background:rgba(255,255,255,.06);
+}
+
+.roulette-mask{
+  position:relative;
+  overflow:hidden;
+  border-radius:16px;
+  padding:18px 0;
+}
+
+.roulette-mask::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:50%;
+  width:4px;
+  transform:translateX(-50%);
+  background:#a855f7;
+  box-shadow:0 0 18px #a855f7;
+  z-index:10;
+}
+
 
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
@@ -281,7 +304,8 @@ nav button:hover{ color:#c084fc; }
 }
 
 /* close button */
-#closeInfo{
+#closeInfo,
+#closeSupport{
   position:absolute;
   top:14px;
   right:16px;
@@ -291,6 +315,96 @@ nav button:hover{ color:#c084fc; }
   color:#fff;
   cursor:pointer;
 }
+
+
+/* ===== SUPPORT BUTTON ===== */
+#supportBtn{
+  position:fixed;
+  top:180px; /* juste sous Infos */
+  right:50px;
+  z-index:200;
+  padding:10px 18px;
+  font-size:26px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(145deg,#22d3ee,#0ea5e9);
+  color:#fff;
+  cursor:pointer;
+}
+
+#supportBtn:hover{
+  filter:brightness(1.1);
+}
+
+/* ===== SUPPORT MODAL ===== */
+#supportModal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  z-index:10000;
+  align-items:center;
+  justify-content:center;
+}
+
+.support-link{
+  display:inline-block;
+  margin-top:20px;
+  padding:14px 26px;
+  font-size:18px;
+  font-weight:bold;
+  border-radius:12px;
+  background:linear-gradient(145deg,#8b5cf6,#7c3aed);
+  color:#fff;
+  text-decoration:none;
+}
+
+.support-link:hover{
+  filter:brightness(1.1);
+}
+
+
+/* ===== CONFETTI V2 (PREMIUM) ===== */
+.confetti {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 2px;
+  will-change: transform, opacity;
+}
+
+/* ===== DUPLICATE BADGE (OPEN PACK) ===== */
+.duplicate-badge{
+  position:absolute;
+  top:50%;
+  right:10px;
+  transform:translateY(-50%);
+  background:linear-gradient(145deg,#facc15,#f97316);
+  color:#000;
+  padding:6px 10px;
+  border-radius:12px;
+  font-weight:bold;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:0 0 12px rgba(250,204,21,.7);
+}
+
+/* ===== INVENTORY COUNT BADGE ===== */
+.count-badge{
+  position:absolute;
+  bottom:6px;
+  left:6px;
+  background:#8b5cf6;
+  color:#fff;
+  font-size:13px;
+  font-weight:bold;
+  padding:4px 8px;
+  border-radius:999px;
+  box-shadow:0 0 10px rgba(139,92,246,.8);
+}
+
 
 </style>
 </head>
@@ -344,12 +458,10 @@ nav button:hover{ color:#c084fc; }
 
     <p><strong>Special cards are linked to Trackmania events:</strong></p>
 
-    <p>
-      🔴 <strong>Red cards</strong> — Players who won <strong>5 Survivor cups or more</strong>
-      🟡 <strong>Yellow cards</strong> — Players who won <strong>10 Twenty cups or more</strong>
-      🟢 <strong>Green cards</strong> — Team <strong>Les Dégueux</strong>
-      🌟 <strong>Icon cards</strong> — Just me… because I’m the <strong>GOAT</strong> 🐐
-    </p>
+    <p>🔴 <strong>Red cards</strong> — Players who won <strong>5 Survivor cups or more</strong></p>
+    <p>🟡 <strong>Yellow cards</strong> — Players who won <strong>10 Twenty cups or more</strong></p>
+    <p>🟢 <strong>Green cards</strong> — Team <strong>Les Dégueux</strong> → better than Nyxar</p>
+    <p>🌟 <strong>Icon cards</strong> — Just me and David who is hosting the site for free</strong> 🐐</p>
 
     <p>
       More <strong>special cards</strong> will be added for major Trackmania competitions 
@@ -370,15 +482,51 @@ nav button:hover{ color:#c084fc; }
   </div>
 </div>
 
+<button id="supportBtn">Support</button>
+
+<div id="supportModal">
+  <div class="info-box">
+    <button id="closeSupport">✕</button>
+
+    <h2>Support</h2>
+
+    <p><strong>Thank you so much for the insane support around the TM Pack project.</strong></p>  
+<p> I honestly never expected such a success, and seeing so many people enjoy it means more to me than you can imagine.</p>
+
+<p><strong>The site is now finally hosted by David — the GOAT 🐐.</strong>  
+Thanks to him, the project is more stable and can keep growing properly.</p>
+
+<p>If you enjoy TM Pack and want to support the project, you can do so.  </>
+<p>To be fully transparent with you: <strong>50% will go to me</strong>, and <strong>50% will go directly to David</strong> to help with hosting costs and future improvements.</p>
+
+<p><strong>You are absolutely incredible.</strong>  
+TM Pack may have started with me, but <strong>you are the ones making it better every single day</strong> ❤️</p>
+
+<p> <strong>List of all supporters : </strong>
+ Ben</p>
+
+    <a
+      href="https://streamlabs.com/chacalouu/tip"
+      target="_blank"
+      class="support-link"
+    >
+      Support the project
+    </a>
+
+  </div>
+</div>
+
 
 <div class="pack-wrap">
   <button id="openPack">Open</button>
   <div id="remaining"></div>
 
-  <div id="animation">
-    <div class="loader"><span id="countdown">5</span></div>
-    <div style="margin-top:10px;opacity:.85">Opening pack...</div>
+ <div id="animation">
+  <div class="roulette-mask">
+    <div class="roulette" id="roulette"></div>
   </div>
+  <div style="margin-top:10px;opacity:.85">Opening pack...</div>
+</div>
 
   <div id="result"></div>
 </div>
@@ -869,7 +1017,7 @@ const PACK_IMAGES = [
 "SHIELDBANDIT1.png",
 "SHORTY1.png",
 "SHORTYGRAY1.png",
-"SHPLUCK1.png",
+"SHPLUK1.png",
 "SIMO1.png",
 "SIMPLYNICK1.png",
 "SIQAA1.png",
@@ -1091,35 +1239,44 @@ function renderInventory(){
   inventoryDiv.innerHTML = "";
 
   const query = searchInput.value.toLowerCase();
-  const ownedSet = new Set(data.owned);
+  const ownedCounts = getOwnedCounts();
   const ownedOnly = ownedOnlyCheckbox.checked;
 
   for(const imgName of PACK_IMAGES){
 
-    // 🔍 filtre recherche
     if(!imgName.toLowerCase().includes(query)) continue;
+    if(ownedOnly && !ownedCounts[imgName]) continue;
 
-    // ✅ filtre "owned only"
-    if(ownedOnly && !ownedSet.has(imgName)) continue;
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
 
     const img = document.createElement("img");
     img.src = "images/" + imgName;
     img.loading = "lazy";
 
-    if(ownedSet.has(imgName)) img.classList.add("owned");
+    if(ownedCounts[imgName]) img.classList.add("owned");
 
     img.onclick = () => {
       cardPreviewImg.src = img.src;
       cardPreview.style.display = "flex";
     };
 
-    img.onerror = () => { img.style.opacity = ".15"; };
+    wrapper.appendChild(img);
 
-    inventoryDiv.appendChild(img);
+    // 🔢 badge quantité
+    if(ownedCounts[imgName] > 1){
+      const badge = document.createElement("div");
+      badge.className = "count-badge";
+      badge.textContent = ownedCounts[imgName];
+      wrapper.appendChild(badge);
+    }
+
+    inventoryDiv.appendChild(wrapper);
   }
 
   computeProgress();
 }
+
 
 
 /* ========= DAILY RECAP ========= */
@@ -1249,21 +1406,93 @@ async function copyCanvasToClipboard(){
 
 recapCanvas.addEventListener("click", copyCanvasToClipboard);
 
-/* ========= PACK OPENING ========= */
+function getOwnedCounts(){
+  const counts = {};
+  for(const c of data.owned){
+    counts[c] = (counts[c] || 0) + 1;
+  }
+  return counts;
+}
+
+
+
+
+function spawnConfetti(x, y, count = 50) {
+  const colors = [
+    "#a855f7", // violet
+    "#22d3ee", // cyan
+    "#f472b6", // rose
+    "#fde047", // gold
+    "#ffffff"
+  ];
+
+  for (let i = 0; i < count; i++) {
+    const conf = document.createElement("div");
+    conf.className = "confetti";
+
+    const size = Math.random() * 6 + 4;
+    conf.style.width = size + "px";
+    conf.style.height = size * 0.6 + "px";
+    conf.style.background =
+      colors[Math.floor(Math.random() * colors.length)];
+
+    const angle = Math.random() * Math.PI * 2;
+    const velocity = Math.random() * 6 + 4;
+
+    let vx = Math.cos(angle) * velocity;
+    let vy = Math.sin(angle) * velocity - 4;
+
+    let gravity = 0.25;
+    let rotation = Math.random() * 360;
+    let rotationSpeed = Math.random() * 12 - 6;
+
+    let posX = x;
+    let posY = y;
+
+    conf.style.left = posX + "px";
+    conf.style.top = posY + "px";
+
+    document.body.appendChild(conf);
+
+    let life = 0;
+    const maxLife = 60;
+
+    function animate() {
+      life++;
+      vx *= 0.98;
+      vy += gravity;
+
+      posX += vx;
+      posY += vy;
+      rotation += rotationSpeed;
+
+      conf.style.transform =
+        `translate(${posX - x}px, ${posY - y}px) rotate(${rotation}deg)`;
+
+      conf.style.opacity = 1 - life / maxLife;
+
+      if (life < maxLife) {
+        requestAnimationFrame(animate);
+      } else {
+        conf.remove();
+      }
+    }
+
+    requestAnimationFrame(animate);
+  }
+}
+
+
+
+
+/* ========= PACK OPENING (CSGO STYLE) ========= */
 let opening = false;
 
-openBtn.onclick = () => {
+openBtn.onclick = async () => {
   if(opening) return;
 
-  // si déjà fini => on peut juste afficher recap
   if(data.remaining <= 0){
     alert("No packs left today. Come back at midnight!");
-    if(data.todayPacks.length) generateDailyRecap();
-    return;
-  }
-
-  if(PACK_IMAGES.length === 0){
-    alert("No cards found: PACK_IMAGES is empty.");
     return;
   }
 
@@ -1272,48 +1501,72 @@ openBtn.onclick = () => {
   resultDiv.innerHTML = "";
   animationEl.style.display = "block";
 
-  let t = 5;
-  countdownEl.textContent = t;
+  const roulette = document.getElementById("roulette");
+  roulette.innerHTML = "";
 
-  const interval = setInterval(()=>{
-    t--;
-    countdownEl.textContent = t;
-  },1000);
+  // 🎯 carte finale
+  const finalCard = PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)];
+  const alreadyOwned = data.owned.includes(finalCard);
 
-  setTimeout(async ()=>{
-    clearInterval(interval);
+  /* ========= POOL ========= */
+  const pool = [];
+  for(let i = 0; i < 15; i++){
+    pool.push(PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)]);
+  }
+  pool.push(finalCard);
+  for(let i = 0; i < 6; i++){
+    pool.push(PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)]);
+  }
 
-    const card = PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)];
+  pool.forEach(name => {
+    const img = document.createElement("img");
+    img.src = "images/" + name;
+    roulette.appendChild(img);
+  });
 
-    // owned (collection globale)
-    if(!data.owned.includes(card)) data.owned.push(card);
+  roulette.style.transition = "none";
+  roulette.style.transform = "translateX(0)";
+  roulette.offsetHeight;
 
-    // packs du jour (exactement 5 max)
-    if(data.todayPacks.length < MAX_PACKS_PER_DAY){
-      data.todayPacks.push(card);
-    }
+  const cardWidth = 154;
+  const finalIndex = pool.indexOf(finalCard);
+  const centerOffset =
+    (roulette.parentElement.offsetWidth / 2) - (cardWidth / 2);
+  const randomOffset = (Math.random() * 120) - 60;
+  const translateX =
+    -(finalIndex * cardWidth) + centerOffset + randomOffset;
 
-    // decrement puis save
+  roulette.style.transition =
+    "transform 8s cubic-bezier(0.4,0.0,0.2,1)";
+  roulette.style.transform = `translateX(${translateX}px)`;
+
+  setTimeout(() => {
+    animationEl.style.display = "none";
+
+    // ✅ AUTORISER LES DOUBLONS
+    data.owned.push(finalCard);
+    data.todayPacks.push(finalCard);
     data.remaining--;
     saveData();
 
-    animationEl.style.display = "none";
-    resultDiv.innerHTML = `<img src="images/${card}" alt="${card}">`;
-
-    opening = false;
-    openBtn.disabled = false;
+    resultDiv.innerHTML = `
+      <div style="position:relative;display:inline-block;">
+        <img src="images/${finalCard}" id="finalCardImg">
+        ${alreadyOwned ? `<div class="duplicate-badge">⚠️ DUPLICATE</div>` : ``}
+      </div>
+    `;
 
     updateRemaining();
     renderInventory();
 
-    // Si terminé => générer recap
-    if(data.remaining === 0){
-      await generateDailyRecap();
-      // scroll doux vers recap
-      dailyRecapWrap.scrollIntoView({behavior:"smooth", block:"start"});
-    }
-  },5000);
+    opening = false;
+    openBtn.disabled = false;
+  }, 8000);
 };
+
+
+
+
 
 /* ========= CLOSE PREVIEW ========= */
 cardPreview.addEventListener("click", () => {
@@ -1363,6 +1616,25 @@ closeInfo.onclick = () => {
 infoModal.addEventListener("click", (e) => {
   if(e.target === infoModal){
     infoModal.style.display = "none";
+  }
+});
+
+/* ========= SUPPORT MODAL ========= */
+const supportBtn = document.getElementById("supportBtn");
+const supportModal = document.getElementById("supportModal");
+const closeSupport = document.getElementById("closeSupport");
+
+supportBtn.onclick = () => {
+  supportModal.style.display = "flex";
+};
+
+closeSupport.onclick = () => {
+  supportModal.style.display = "none";
+};
+
+supportModal.addEventListener("click", (e) => {
+  if(e.target === supportModal){
+    supportModal.style.display = "none";
   }
 });
 
