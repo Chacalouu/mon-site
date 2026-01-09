@@ -1251,13 +1251,13 @@ function renderInventory(){
     wrapper.style.position = "relative";
 
     const img = document.createElement("img");
-    img.src = "images/" + imgName;
+    img.src = "images/" + imgName.replace(".png", ".avif");
     img.loading = "lazy";
 
     if(ownedCounts[imgName]) img.classList.add("owned");
 
     img.onclick = () => {
-      cardPreviewImg.src = img.src;
+      cardPreviewImg.src = img.src.replace('.png', '.avif');
       cardPreview.style.display = "flex";
     };
 
@@ -1359,7 +1359,7 @@ ctx.textAlign = "center";
 
   for(let idx=0; idx<cards.length; idx++){
     try{
-      const img = await loadImage("images/" + cards[idx]);
+      const img = await loadImage("images/" + cards[idx].replace(".png", ".avif"));
       ctx.drawImage(img, positions[idx].x, positions[idx].y, w, h);
     }catch{
       // si image carte introuvable
@@ -1520,7 +1520,7 @@ openBtn.onclick = async () => {
 
   pool.forEach(name => {
     const img = document.createElement("img");
-    img.src = "images/" + name;
+    img.src = "images/" + name.replace('.png', '.avif');
     roulette.appendChild(img);
   });
 
@@ -1551,7 +1551,7 @@ openBtn.onclick = async () => {
 
     resultDiv.innerHTML = `
       <div style="position:relative;display:inline-block;">
-        <img src="images/${finalCard}" id="finalCardImg">
+        <img src="images/${finalCard.replace(".png", ".avif")}" id="finalCardImg">
         ${alreadyOwned ? `<div class="duplicate-badge">⚠️ DUPLICATE</div>` : ``}
       </div>
     `;
