@@ -13,7 +13,7 @@
 ========================= */
 body{
   min-height:100vh;
-  background:url("../background.jpeg") center/cover no-repeat fixed;
+  background:url("background.jpeg") center/cover no-repeat fixed;
   color:#fff;
 }
 html{scrollbar-gutter:stable}
@@ -40,7 +40,7 @@ nav button{
   border:none;
   color:#fff;
   font-size:32px;
-  font-weight:normal; /* ✅ important: pas gras */
+  font-weight:normal;
   cursor:pointer;
   padding:15px 14px;
 }
@@ -180,6 +180,107 @@ input{
 .theme-item input{
   accent-color:#1db954;
 }
+
+/* =========================
+   DEFINITION MODAL
+========================= */
+.def-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
+}
+.def-box{
+  background:#111;
+  width:900px;
+  max-width:95%;
+  border-radius:25px;
+  padding:38px 44px 44px;
+  box-shadow:0 20px 40px rgba(0,0,0,.55);
+  position:relative;
+}
+.def-box h2{
+  font-size:38px;
+  font-weight:900;
+  margin-bottom:10px;
+  color:#1db954;
+}
+.def-box p{
+  font-size:28px;
+  line-height:1.6;
+  opacity:.92;
+}
+.def-close{
+  position:absolute;
+  top:14px;
+  right:18px;
+  font-size:22px;
+  cursor:pointer;
+  opacity:.7;
+}
+.def-close:hover{opacity:1}
+
+.show-def{
+  margin-top:10px;
+  background:#444;
+  font-size:14px;
+  display:none;
+}
+
+/* =========================
+   LAST DRAWS (TOP RIGHT)
+========================= */
+.last-draws{
+  position:fixed;
+  top:90px;
+  right:20px;
+  width:260px;
+  background:rgba(0,0,0,.6);
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+  z-index:999;
+}
+.last-draws h3{
+  text-align:center;
+  font-size:15px;
+  margin-bottom:10px;
+  font-weight:900;
+  opacity:.9;
+}
+.last-draws-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.last-draw-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(255,255,255,.08);
+  padding:6px 10px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight:700;
+}
+.last-draw-item span{
+  flex:1;
+}
+.last-draw-item button{
+  background:none;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+  padding:0 4px;
+  opacity:.7;
+}
+.last-draw-item button:hover{
+  opacity:1;
+}
+
 .footer{
   position:fixed;
   bottom:12px;
@@ -192,60 +293,77 @@ input{
 </head>
 
 <body>
+
 <div class="overlay">
 
-<nav>
-  <button onclick="location.href='../index.html'">Home</button>
-  <button onclick="location.href='../prog/prog.html'">Schedule</button>
-  <button onclick="location.href='../survivor/survivor.html'">Survivor</button>
-  <button onclick="location.href='../twenty/twenty.html'">Twenty</button>
-  <button onclick="location.href='../rivals/index.html'">Rivals</button>
-  <button onclick="location.href='../pack/pack.html'">TM Pack</button>
-  <button onclick="location.href='../maps/maps.html'">My Maps</button>
-  <button onclick="location.href='minuteur.html'">Mapping</button>
-</nav>
+  <nav>
+    <button onclick="location.href='../index.html'">Home</button>
+    <button onclick="location.href='../prog/prog.html'">Schedule</button>
+    <button onclick="location.href='../survivor/survivor.html'">Survivor</button>
+    <button onclick="location.href='../twenty/twenty.html'">Twenty</button>
+    <button onclick="location.href='../rivals/index.html'">Rivals</button>
+    <button onclick="location.href='../pack/pack.html'">TM Pack</button>
+    <button onclick="location.href='../maps/maps.html'">My Maps</button>
+    <button onclick="location.href='minuteur.html'">Mapping</button>
+  </nav>
 
-<div class="container-wrapper">
-<div class="container">
+  <div class="container-wrapper">
+    <div class="container">
 
-<!-- DRAW -->
-<div class="draw-wrapper">
-  <button id="draw" class="draw">Draw a theme</button>
+      <!-- DRAW -->
+      <div class="draw-wrapper">
+        <button id="draw" class="draw">Draw a theme</button>
+      </div>
+
+      <!-- GREEN BOX -->
+      <div class="green-box">
+        <div class="draw-result" id="drawResult">Theme</div>
+        <div class="timer" id="timer">15:00</div>
+      </div>
+
+      <!-- CONTROLS -->
+      <div class="controls">
+        <label>Minutes</label>
+        <input type="number" id="minutes" value="15" min="0">
+        <label>Seconds</label>
+        <input type="number" id="seconds" value="0" min="0" max="59">
+      </div>
+
+      <!-- TIMER BUTTONS -->
+      <div class="buttons">
+        <button id="start">Start</button>
+        <button id="pause" class="pause" disabled>Pause</button>
+        <button id="reset" class="reset" disabled>Reset</button>
+      </div>
+
+      <!-- THEMES -->
+      <div class="themes-box">
+        <div class="themes-title">Available Themes</div>
+        <div class="themes-list" id="themesList"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="footer">Chacalou.com ©</footer>
+
+</div><!-- ✅ close .overlay -->
+
+<!-- ✅ MODAL OUTSIDE OVERLAY (infaillible) -->
+<div class="def-overlay" id="defOverlay">
+  <div class="def-box" role="dialog" aria-modal="true">
+    <div class="def-close" id="defClose">✖</div>
+    <h2 id="defTitle">Theme</h2>
+    <p id="defText">Definition</p>
+  </div>
 </div>
 
-<!-- GREEN BOX -->
-<div class="green-box">
-  <div class="draw-result" id="drawResult">Theme</div>
-  <div class="timer" id="timer">15:00</div>
+<!-- LAST 8 DRAWS -->
+<div class="last-draws">
+  <h3>Last Themes</h3>
+  <div class="last-draws-list" id="lastDrawsList"></div>
 </div>
 
-<!-- CONTROLS -->
-<div class="controls">
-  <label>Minutes</label>
-  <input type="number" id="minutes" value="15" min="0">
-  <label>Seconds</label>
-  <input type="number" id="seconds" value="0" min="0" max="59">
-</div>
-
-<!-- TIMER BUTTONS -->
-<div class="buttons">
-  <button id="start">Start</button>
-  <button id="pause" class="pause" disabled>Pause</button>
-  <button id="reset" class="reset" disabled>Reset</button>
-</div>
-
-<!-- THEMES -->
-<div class="themes-box">
-  <div class="themes-title">Available Themes</div>
-  <div class="themes-list" id="themesList"></div>
-</div>
-
-</div>
-</div>
-
-<footer class="footer">Chacalou.com ©</footer>
-
-</div>
 
 <script>
 /* ===== AUDIO ===== */
@@ -315,66 +433,190 @@ resetBtn.onclick=()=>{
 };
 
 /* ===== THEMES ===== */
-const themes=[
-"Classic Tech","Auto-drift Tech","Transitional Tech","Speedtech",
-"Mixed 2 Surfaces","Mixed 3 Surfaces","Mixed 4 Surfaces",
-"Snow Car Only","Desert Car Only","Rally Car Only",
-"Dirt Gear 3","Dirt Gear 4","Dirt Gear 5",
-"Grass Gear 3","Grass Gear 4","Grass Gear 5",
-"Fullspeed","Ice Gear 3","Ice Gear 4",
-"Plastic Only","Bobsleigh","Heavy Transitions","RPG","Competitive",
-"3 Blocks Wide","7x7 Cube","Uphill Only","Downhill Only",
-"Freewheel","Funspeed","LOL Map","3 Jumps Minimum","Slow Motion",
-"Royal Style","Water","Grass Slides","2 Tricks Required",
-"Barrels","Transfers","2 Cars","Slow Wood","Classic Wood",
-"Fast Wood","Off-road","Off-grid","Reactor Up","Reactor Down",
-"Round Map","Forced Cam 3","Map With Cut","Hardway / Safeway",
-"Multiple Routes","Very Dark Map","Bonks",
-"Letter Shape","Number Shape",
-"15 Blocks Max","10 Blocks Max","5 Blocks Max",
-"No Test Mapping","Nascar","No Brake Block","Fragile Blocks",
-"Only Right Turns","Only Left Turns",
-"Back & Forth Map","One-shot Mapping","Moving Blocks"
+const themes = [
+  {name:"Classic Tech",def:"󠁧󠁢󠁥󠁮󠁧󠁿 A traditional tech map focused on precision, clean lines and controlled drifting. // Une map tech classique, en gear 4 avec plusieurs drifts."},
+  {name:"Auto-drift Tech",def:"A tech map where most drifts are automatic or assisted by block placement. // Une map tech ou les drifts se déclenche avec un changement de surfaces ou des sauts."},
+  {name:"Transitional Tech",def:"Tech gameplay emphasizing transitions between blocks and surfaces. // Une map tech avec beaucoup de transitions, des micros sauts, des changement de routes.."},
+  {name:"Speedtech",def:"A fast-paced tech map mixing speed and technical sections. // Une map tech rapide, en gear 5 avec plusieurs drifts (idéal pour que Toto gagne)."},
+  {name:"Mixed 2 Surfaces",def:"The map must use exactly two different driving surfaces. // Une map ou l'on mix exactement 2 surfaces."},
+  {name:"Mixed 3 Surfaces",def:"The map must include three different surfaces. // Une map ou l'on mix exactement 3 surfaces."},
+  {name:"Mixed 4 Surfaces",def:"The map combines four distinct driving surfaces. // Une map ou l'on mix exactement 4 surfaces."},
+  {name:"Snow Car Only",def:"The entire map is designed exclusively for the snow car. // Une map uniquement en snow car"},
+  {name:"Desert Car Only",def:"The entire map is designed exclusively for the desert car. // Une map uniquement en desert car"},
+  {name:"Rally Car Only",def:"The entire map is designed exclusively for the rally car. // Une map uniquement en rallye car"},
+  {name:"Dirt Gear 3",def:"Dirt sections tuned to be driven mainly in gear 3. // Une map dirt uniquement en gear 3"},
+  {name:"Dirt Gear 4",def:"Dirt sections optimized for gear 4 driving. // Une map dirt uniquement en gear 4"},
+  {name:"Dirt Gear 5",def:"High-speed dirt sections focused on gear 5 control. // Une map dirt uniquement en gear 5"},
+  {name:"Grass Gear 3",def:"Grass sections designed for consistent gear 3 driving. // Une map grass uniquement en gear 3"},
+  {name:"Grass Gear 4",def:"Grass gameplay focused on gear 4 stability. // Une map grass uniquement en gear 4"},
+  {name:"Grass Gear 5",def:"Fast grass sections played mostly in gear 5. // Une map grass uniquement en gear 5"},
+  {name:"Fullspeed",def:"Flat-out driving with no braking required. // Une map fullspeed, on dort zzz"},
+  {name:"Ice Gear 3",def:"Ice sections designed to be driven in gear 3. // Une map glace uniquement en gear 3"},
+  {name:"Ice Gear 4",def:"Ice sections designed to be driven in gear 4. // Une map glace uniquement en gear 4"},
+  {name:"Plastic Only",def:"The map uses plastic blocks as the main surface. // Une map entièrement en plastique."},
+  {name:"Bobsleigh",def:"Gameplay focused on bobsleigh blocks and wall riding. // Une map bobsleigh pour faire une petite sieste."},
+  {name:"Heavy Transitions",def:"Frequent and demanding transitions between surfaces or blocks. // Je sais pas ce que c'est"},
+  {name:"RPG",def:"An exploration-based map with checkpoints and progression. // Une map rpg, classique"},
+  {name:"Competitive",def:"A balanced map designed for fair and competitive play. // Une map compétitive ou faut du skill"},
+  {name:"3 Blocks Wide",def:"The drivable area is limited to a width of three blocks. // Une map en ligne droite, 3 blocs de large maximum"},
+  {name:"7x7 Cube",def:"The entire map must fit inside a 7x7 cube. // Une map dans un cube de 7x7"},
+  {name:"Uphill Only",def:"The map only goes upward with no downhill sections. // Une map ou on ne doit pas descendre"},
+  {name:"Downhill Only",def:"The map only goes downward with no uphill sections. // Une map ou on ne doit pas monter"},
+  {name:"Freewheel",def:"Sections where players must release acceleration to succeed. // Une map avec des passages roue libre"},
+  {name:"Funspeed",def:"Fast and fun gameplay without strict technical difficulty. // Une map rapide, mixed, sans drifts"},
+  {name:"LOL Map",def:"A troll or joke map with unexpected or funny elements. // Une map ou ovus pouvez laisser votre imagination prendre le dessus, mais attention, ça doit etre un peu roulable et plaisant a jouer"},
+  {name:"3 Jumps Minimum",def:"The map must contain at least three jumps. // Une map ou il doit y avoir 3 sauts minimum, safe way recommandé"},
+  {name:"Slow Motion",def:"Gameplay designed around slow-speed precision. // Une map avec plusieurs passage au ralenti"},
+  {name:"Royal Style",def:"Inspired by Trackmania Royal-style short and varied sections. // Une map dans le style royal, avec des tuyaux, des plateformes.."},
+  {name:"Water",def:"Water blocks play a significant role in the map. // Une map avec la mécanique roue mouillé, ou sous l'eau"},
+  {name:"Grass Slides",def:"Gameplay focused on sliding mechanics on grass. // Une map ou il doit y avoir au minimum 2 grass slide"},
+  {name:"2 Tricks Required",def:"The map must require at least two driving tricks. // Une map avec minimum 2 tricks differents (gs, barrel, néo, toto's trick, wallride...)"},
+  {name:"Barrels",def:"Barrel blocks are a core mechanic of the map. // Une map avec minimum 2 barrels"},
+  {name:"Transfers",def:"The map includes transfers between different paths or heights. // Une map avec minimum 2 transferts"},
+  {name:"2 Cars",def:"The map requires switching or using two different cars. // Une map qui doit mixer 2 voitures differentes"},
+  {name:"Slow Wood",def:"Wood blocks used for slow and controlled driving. // Une map bois lente (aucun boost)"},
+  {name:"Classic Wood",def:"Traditional wood gameplay with balanced speed. // Une map bois classique"},
+  {name:"Fast Wood",def:"High-speed sections built mainly with wood blocks. // Une map bois très rapide"},
+  {name:"Off-road",def:"Gameplay focused on dirt, grass or non-road surfaces. // Une map offroad, on doit rouler sur des surfaces ou blocs inhabituels"},
+  {name:"Off-grid",def:"The map is not aligned to the standard grid. // Une map en free mapping, souvent des meilleurs transitions"},
+  {name:"Reactor Up",def:"Reactor up blocks are a core gameplay mechanic. // Une map avec le glider haut"},
+  {name:"Reactor Down",def:"Reactor down blocks are required for progression. // Une map avec le glider bas"},
+  {name:"Round Map",def:"The map layout forms a circular or looping shape. // Une map en cercle, débrouillez vous"},
+  {name:"Forced Cam 3",def:"The map must be played entirely with camera 3. // Une map obligatoire en cam 3"},
+  {name:"Map With Cut",def:"A shortcut or cut is intentionally included. // Une map avec un cut voulu"},
+  {name:"Hardway / Safeway",def:"Players can choose between a risky or a safe path. // Une map avec plusieurs hardway et safeway"},
+  {name:"Multiple Routes",def:"The map offers multiple valid paths to finish. // Une map avec plusieurs routes possible"},
+  {name:"Very Dark Map",def:"Low visibility map with minimal lighting. // Une map de nuit, ou dans le noir"},
+  {name:"Bonks",def:"Gameplay designed around intentional wall hits or bonks. // Une map avec plusieurs bonk a faire"},
+  {name:"Letter Shape",def:"The map layout forms a recognizable letter. // Une map en forme de lettres, l'initiale de la daronne ?"},
+  {name:"Number Shape",def:"The map layout forms a recognizable number. // Une map en forme de chiffres, votre bodycount ?"},
+  {name:"15 Blocks Max",def:"The map can use a maximum of 15 blocks. // Une map ou vous utiliser au maximum 15 blocs"},
+  {name:"10 Blocks Max",def:"The map can use a maximum of 10 blocks. // Une map ou vous utiliser au maximum 10 blocs"},
+  {name:"5 Blocks Max",def:"The map can use a maximum of 5 blocks. // Une map ou vous utiliser au maximum 5 blocs"},
+  {name:"No Test Mapping",def:"The mapper is not allowed to test the map. // Vous mapper sans jamais tester ce que vous faites, éviter les speedcheck/saut ou roue libre apres un cp. Vous devez cheat valid a la fin"},
+  {name:"Nascar",def:"Oval-style map with constant turning. // Une map nascar, de la road, pas de drifts, vous devez lacher l'accelerateur dans certains virages"},
+  {name:"No Brake Block",def:"Brake blocks are forbidden. // Une fois un bloc posé, vous ne pouvez plus le supprimer, tant pis pour vous"},
+  {name:"Fragile Blocks",def:"Fragile blocks play a key role in the gameplay. // Une map ou l'on doit etre avec l'effet fragile"},
+  {name:"Only Right Turns",def:"The map only contains right turns. // Une map qui tourne que à droite"},
+  {name:"Only Left Turns",def:"The map only contains left turns. // Une map qui tourne que à gauche"},
+  {name:"Back & Forth Map",def:"The layout requires going back and forth multiple times. // Une map ou l'on fait un aller retour, le finish doit etre le start ou derriere le start"},
+  {name:"One-shot Mapping",def:"The map must be built in a single mapping session. // Une fois un bloc posé, vous ne pouvez plus le supprimer, tant pis pour vous"},
+  {name:"Moving Blocks",def:"Moving blocks are a core gameplay element. // Une map avec des blocs en mouvements"}
 ];
 
 /* ===== THEMES CHECKLIST ===== */
-const themesListEl=document.getElementById("themesList");
+const themesListEl = document.getElementById("themesList");
 themes.forEach(t=>{
-  const label=document.createElement("label");
-  label.className="theme-item";
-  const cb=document.createElement("input");
-  cb.type="checkbox";
-  cb.checked=true;
-  cb.dataset.theme=t;
-  label.append(cb,t);
+  const label = document.createElement("label");
+  label.className = "theme-item";
+
+  const cb = document.createElement("input");
+  cb.type = "checkbox";
+  cb.checked = true;
+  cb.dataset.theme = t.name;
+
+  label.append(cb, t.name);
   themesListEl.appendChild(label);
 });
 
+/* ===== MODAL ===== */
+const defOverlay = document.getElementById("defOverlay");
+const defTitle = document.getElementById("defTitle");
+const defText = document.getElementById("defText");
+const defClose = document.getElementById("defClose");
+
+const showDefBtn = document.createElement("button");
+showDefBtn.textContent = "Show def";
+showDefBtn.className = "show-def";
+document.querySelector(".green-box").appendChild(showDefBtn);
+
+let lastTheme = null;
+
+function showDefinition(){
+  if(!lastTheme) return;
+  defTitle.textContent = lastTheme.name;
+  defText.textContent = lastTheme.def;
+  defOverlay.style.display = "flex";
+  showDefBtn.style.display = "none";
+}
+
+function closeDefinition(){
+  defOverlay.style.display = "none";
+  showDefBtn.style.display = lastTheme ? "inline-block" : "none";
+}
+
+defClose.onclick = closeDefinition;
+defOverlay.addEventListener("click",(e)=>{
+  if(e.target === defOverlay) closeDefinition(); // click outside closes
+});
+showDefBtn.onclick = showDefinition;
+
 /* ===== DRAW ===== */
-const drawBtn=document.getElementById("draw");
-const drawResult=document.getElementById("drawResult");
+const drawBtn = document.getElementById("draw");
+const drawResult = document.getElementById("drawResult");
 
-drawBtn.onclick=()=>{
-  const enabled=[...document.querySelectorAll(".theme-item input:checked")]
-    .map(cb=>cb.dataset.theme);
+drawBtn.onclick = () => {
+  const enabled = [...document.querySelectorAll(".theme-item input:checked")]
+    .map(cb => cb.dataset.theme);
 
-  if(!enabled.length){
-    drawResult.textContent="No theme selected!";
+  if (!enabled.length) {
+    drawResult.textContent = "No theme selected!";
     return;
   }
 
-  drawBtn.disabled=true;
-  let elapsed=0;
-  const shuffle=setInterval(()=>{
-    drawResult.textContent=enabled[Math.floor(Math.random()*enabled.length)];
-    elapsed+=100;
-    if(elapsed>=5000){
+  drawBtn.disabled = true;
+  let elapsed = 0;
+
+  const shuffle = setInterval(() => {
+    drawResult.textContent = enabled[Math.floor(Math.random() * enabled.length)];
+    elapsed += 100;
+
+    if (elapsed >= 5000) {
       clearInterval(shuffle);
-      drawResult.textContent=enabled[Math.floor(Math.random()*enabled.length)];
-      drawBtn.disabled=false;
+
+      const final = enabled[Math.floor(Math.random() * enabled.length)];
+      drawResult.textContent = final;
+      drawBtn.disabled = false;
+
+      lastTheme = themes.find(t => t.name === final) || null;
+
+// add to last draws
+lastDraws.unshift(final);
+if(lastDraws.length > 8) lastDraws.pop();
+renderLastDraws();
+
+
+      // ouvre 2s après
+      setTimeout(showDefinition, 700);
     }
-  },100);
+  }, 100);
 };
+
+/* ===== LAST DRAWS HISTORY ===== */
+const lastDrawsEl = document.getElementById("lastDrawsList");
+let lastDraws = [];
+
+function renderLastDraws(){
+  lastDrawsEl.innerHTML = "";
+  lastDraws.forEach((name, index)=>{
+    const row = document.createElement("div");
+    row.className = "last-draw-item";
+
+    const text = document.createElement("span");
+    text.textContent = name;
+
+    const del = document.createElement("button");
+    del.textContent = "🗑";
+    del.onclick = ()=>{
+      lastDraws.splice(index,1);
+      renderLastDraws();
+    };
+
+    row.append(text, del);
+    lastDrawsEl.appendChild(row);
+  });
+}
+
 </script>
 </body>
 </html>
