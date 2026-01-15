@@ -10,7 +10,7 @@
 
 body{
   min-height:100vh;
-  background:url("../background.jpeg") center/cover no-repeat fixed;
+  background:url("background.jpeg") center/cover no-repeat fixed;
   color:#fff;
 }
 
@@ -95,6 +95,65 @@ tr:hover{background:rgba(192,132,252,.15)}
 
 
 footer{text-align:center;padding:15px;opacity:.5;font-size:14px}
+
+/* =========================
+   PASSWORD BOX (top right)
+========================= */
+.password-box{
+  position:fixed;
+  top:90px;              /* sous la navbar */
+  right:20px;
+  width:200px;
+  background:rgba(0,0,0,.7);
+  backdrop-filter:blur(6px);
+  border-radius:16px;
+  padding:14px 16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  z-index:1000;
+}
+
+.password-box h4{
+  text-align:center;
+  font-size:20px;
+  margin-bottom:10px;
+  color:#c084fc;
+}
+
+.password-line{
+  padding:6px 0;
+  font-size:16px;
+  text-align:center;
+  border-radius:8px;
+}
+
+.password-line:not(:last-child){
+  border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.password-line{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.pwd{
+  font-weight:900;
+  letter-spacing:1px;
+}
+
+.copy-btn{
+  cursor:pointer;
+  font-size:18px;
+  opacity:.7;
+  transition:.2s;
+}
+
+.copy-btn:hover{
+  opacity:1;
+  transform:scale(1.15);
+}
+
 </style>
 </head>
 
@@ -132,6 +191,37 @@ footer{text-align:center;padding:15px;opacity:.5;font-size:14px}
 
   <div id="matches"></div>
 </main>
+
+<div class="password-box">
+  <h4>🔐 Password</h4>
+
+  <div class="password-line">
+    Seeding<span class="pwd">MOOBG0</span>
+    <span class="copy-btn" onclick="copyPwd(this)">📋</span>
+  </div> 
+
+ <div class="password-line">
+    Div 1 : <span class="pwd">TOFI8V</span>
+    <span class="copy-btn" onclick="copyPwd(this)">📋</span>
+  </div>
+
+  <div class="password-line">
+    Div 2 : <span class="pwd">T494LP</span>
+    <span class="copy-btn" onclick="copyPwd(this)">📋</span>
+  </div>
+
+  <div class="password-line">
+    Div 3 : <span class="pwd">I1047V</span>
+    <span class="copy-btn" onclick="copyPwd(this)">📋</span>
+  </div>
+
+  <div class="password-line">
+    Div 4 : <span class="pwd">DJ03TG</span>
+    <span class="copy-btn" onclick="copyPwd(this)">📋</span>
+  </div>
+</div>
+
+
 
 <footer>Chacalou.com ©</footer>
 
@@ -446,6 +536,16 @@ function renderFinalCup(){
 }
 
 renderFinalCup();
+
+function copyPwd(el){
+  const pwd = el.parentElement.querySelector(".pwd").innerText;
+  navigator.clipboard.writeText(pwd);
+
+  el.innerText = "✅";
+  setTimeout(()=> el.innerText = "📋", 800);
+}
+
+
 </script>
 
 </body>
