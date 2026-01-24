@@ -405,6 +405,15 @@ nav button:hover{ color:#c084fc; }
   box-shadow:0 0 10px rgba(139,92,246,.8);
 }
 
+#shareHint{
+  margin-top:14px;
+  font-size:16px;
+  opacity:.85;
+  color:#fff;
+  text-align:center;
+  line-height:1.4;
+}
+#shareHint b{ color:#a855f7; }
 
 </style>
 </head>
@@ -537,6 +546,10 @@ TM Pack may have started with me, but <strong>you are the ones making it better 
 <!-- DAILY RECAP -->
 <div id="dailyRecap">
   <canvas id="recapCanvas" width="1200" height="1200"></canvas>
+<div id="shareHint">
+  Click on the image to copy it!<br>
+  Feel free to share it on Discord in <b>#my-daily-pack</b>
+</div>
   <div id="copyToast">Image copied ✔</div>
 </div>
 
@@ -1444,6 +1457,8 @@ async function generateDailyRecap(){
   const ctx = recapCanvas.getContext("2d");
   ctx.clearRect(0,0,recapCanvas.width,recapCanvas.height);
 
+  document.getElementById("shareHint").style.display = "block";
+
   // Fond
   try{
     const bg = await loadImage("dailyfond.png");
@@ -1634,6 +1649,8 @@ function spawnConfetti(x, y, count = 50) {
 
 /* ========= PACK OPENING (CSGO STYLE) ========= */
 let opening = false;
+let pendingCard = null;
+let pendingAlreadyOwned = false;
 
 openBtn.onclick = async () => {
   if(opening) return;
@@ -1651,16 +1668,26 @@ openBtn.onclick = async () => {
   const roulette = document.getElementById("roulette");
   roulette.innerHTML = "";
 
-  // 🎯 carte finale
-  const finalCard = PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)];
-  const alreadyOwned = data.owned.includes(finalCard);
+  // 🎯 carte finale (tirée IMMEDIATEMENT)
+pendingCard = PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)];
+pendingAlreadyOwned = data.owned.includes(pendingCard);
+
+// ✅ pack consommé AU CLIC (anti-refresh)
+
+data.remaining--;
+saveData();
+updateRemaining();
+
+// stock temporaire (pas encore révélé)
+let pendingToCommit = pendingCard;
+
 
   /* ========= POOL ========= */
   const pool = [];
   for(let i = 0; i < 15; i++){
     pool.push(PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)]);
   }
-  pool.push(finalCard);
+  pool.push(pendingCard);
   for(let i = 0; i < 6; i++){
     pool.push(PACK_IMAGES[Math.floor(Math.random() * PACK_IMAGES.length)]);
   }
@@ -1676,7 +1703,7 @@ openBtn.onclick = async () => {
   roulette.offsetHeight;
 
   const cardWidth = 154;
-  const finalIndex = pool.indexOf(finalCard);
+  const finalIndex = pool.indexOf(pendingCard);
   const centerOffset =
     (roulette.parentElement.offsetWidth / 2) - (cardWidth / 2);
   const randomOffset = (Math.random() * 120) - 60;
@@ -1690,21 +1717,30 @@ openBtn.onclick = async () => {
   setTimeout(() => {
     animationEl.style.display = "none";
 
-    // ✅ AUTORISER LES DOUBLONS
-    data.owned.push(finalCard);
-    data.todayPacks.push(finalCard);
-    data.remaining--;
-    saveData();
-
     resultDiv.innerHTML = `
       <div style="position:relative;display:inline-block;">
-        <img src="images/${finalCard}" id="finalCardImg">
-        ${alreadyOwned ? `<div class="duplicate-badge">⚠️ DUPLICATE</div>` : ``}
+        <img src="images/${pendingCard}" id="pendingCardImg">
+        ${pendingAlreadyOwned ? `<div class="duplicate-badge">⚠️ DUPLICATE</div>` : ``}
       </div>
     `;
 
     updateRemaining();
+
+// ✅ REVELATION (commit réel)
+    data.owned.push(pendingCard);
+    data.todayPacks.push(pendingCard);
+    saveData();
     renderInventory();
+
+   // ✅ si c'était le 5ème pack du jour → afficher le recap après 2s
+if (data.todayPacks.length === 5) {
+  setTimeout(() => {
+    generateDailyRecap();
+  }, 2000);
+}
+
+    pendingCard = null;
+    pendingAlreadyOwned = false;
 
     opening = false;
     openBtn.disabled = false;
@@ -1731,6 +1767,7 @@ document.addEventListener("keydown", (e) => {
 /* ========= INIT ========= */
 // applyGlobalBonus(); // BONUS DÉSACTIVÉ
 updateRemaining();
+document.getElementById("shareHint").style.display = "none";
 
 // 🔒 affichage owned only par défaut
 ownedOnlyCheckbox.checked = true;
