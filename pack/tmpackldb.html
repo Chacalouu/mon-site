@@ -105,6 +105,11 @@ tr:nth-child(even){
   backdrop-filter:blur(6px);
 }
 
+td:nth-child(5){
+  font-weight:bold;
+  color:#a855f7;
+}
+
 /* ===== FOOTER ===== */
 .footer{
   position:fixed;
@@ -148,11 +153,10 @@ tr:nth-child(even){
 <button onclick="location.href='../prog/prog.html'">Schedule</button>
 <button onclick="location.href='../survivor/survivor.html'">Survivor</button>
 <button onclick="location.href='../twenty/twenty.html'">Twenty</button>
-<button onclick="location.href='../Rivals/index.html'">Rivals</button>
+<button onclick="location.href='../rivals/index.html'">Rivals</button>
 <button onclick="location.href='pack.html'">TM Pack</button>
 <button onclick="location.href='../maps/maps.html'">My Maps</button>
-<button onclick="location.href='../Mapping/minuteur.html'">Mapping</button>
-<button onclick="location.href='../Jeux/jeux.html'">Games</button>
+<button onclick="location.href='../mapping/minuteur.html'">Mapping</button>
 </nav>
 
 <div class="container">
@@ -171,11 +175,13 @@ tr:nth-child(even){
 <table>
 <thead>
 <tr>
-<th class="center">#</th>
-<th onclick="sortTable('name')">Name</th>
-<th class="center" onclick="sortTable('score')">Rating</th>
-<th onclick="sortTable('country')">Country</th>
+  <th class="center">#</th>
+  <th onclick="sortTable('name')">Name</th>
+  <th class="center" onclick="sortTable('score')">Rating</th>
+  <th onclick="sortTable('country')">Country</th>
+  <th onclick="sortTable('cards')">Cards</th> <!-- 🆕 -->
 </tr>
+
 </thead>
 <tbody id="tableBody"></tbody>
 </table>
@@ -185,541 +191,794 @@ tr:nth-child(even){
 </div>
 
 <script>
-const players = [
-  {name:"Trident",country:"South Africa",score:84},
-{name:"Granady",country:"Germany",score:94},
-{name:"Piranha",country:"Germany",score:90},
-{name:"Habe",country:"Germany",score:89},
-{name:"Marius",country:"Germany",score:89},
-{name:"Chroma",country:"Germany",score:88},
-{name:"Nuprime",country:"Germany",score:88},
-{name:"Teuflum",country:"Germany",score:88},
-{name:"Dexter",country:"Germany",score:87},
-{name:"Imot",country:"Germany",score:87},
-{name:"Massa",country:"Germany",score:87},
-{name:"Purple",country:"Germany",score:87},
-{name:"Shark",country:"Germany",score:87},
-{name:"Shorty",country:"Germany",score:87},
-{name:"Yamii",country:"Germany",score:86},
-{name:"Barbos",country:"Germany",score:86},
-{name:"Amaterasu",country:"Germany",score:85},
-{name:"Betatoast",country:"Germany",score:85},
-{name:"Iampd",country:"Germany",score:85},
-{name:"Patrose",country:"Germany",score:85},
-{name:"Down",country:"Germany",score:84},
-{name:"Hobbit",country:"Germany",score:84},
-{name:"Lars",country:"Germany",score:84},
-{name:"Racehans",country:"Germany",score:84},
-{name:"Ratchet",country:"Germany",score:84},
-{name:"Hayiom",country:"Germany",score:83},
-{name:"Luckersturbo",country:"Germany",score:83},
-{name:"Fegir",country:"Germany",score:82},
-{name:"Juliano",country:"Germany",score:82},
-{name:"Tala",country:"Germany",score:81},
-{name:"Hellowmarc",country:"Germany",score:80},
-{name:"Kuebelchris",country:"Germany",score:80},
-{name:"Pecuniaadest",country:"Germany",score:78},
-{name:"Revolution",country:"Germany",score:77},
-{name:"Norman",country:"Germany",score:16},
-{name:"Epos",country:"England",score:93},
-{name:"Cozzer04",country:"England",score:91},
-{name:"Pac",country:"England",score:90},
-{name:"Jdon",country:"England",score:89},
-{name:"Quibz",country:"England",score:88},
-{name:"Bozbez",country:"England",score:87},
-{name:"Whizzy",country:"England",score:87},
-{name:"Burntbagels",country:"England",score:85},
-{name:"Darklight",country:"England",score:85},
-{name:"Idoless",country:"England",score:85},
-{name:"Josh1248",country:"England",score:83},
-{name:"Sabre",country:"England",score:83},
-{name:"Lordquacked",country:"England",score:82},
-{name:"Eggy",country:"England",score:81},
-{name:"Moose",country:"England",score:80},
-{name:"Socks",country:"England",score:78},
-{name:"Chocoloco",country:"England",score:72},
-{name:"Baupro",country:"Argentina",score:84},
-{name:"Noiszia",country:"Argentina",score:82},
-{name:"Mudda",country:"Australia",score:93},
-{name:"Nova",country:"Australia",score:88},
-{name:"Redbolt",country:"Australia",score:87},
-{name:"Smithy",country:"Australia",score:85},
-{name:"Mebe12",country:"Australia",score:82},
-{name:"Simplynick",country:"Australia",score:79},
-{name:"Winkyface",country:"Australia",score:75},
-{name:"Krude",country:"Australia",score:78},
-{name:"Ikarus",country:"Austria",score:86},
-{name:"Samifying",country:"Austria",score:85},
-{name:"Rollin",country:"Austria",score:84},
-{name:"Asse",country:"Austria",score:83},
-{name:"Pezi",country:"Austria",score:80},
-{name:"Mariina",country:"Austria",score:79},
-{name:"Crosshairs",country:"Azerbaijan",score:84},
-{name:"Skandear",country:"Belgium",score:91},
-{name:"Scrapie",country:"Belgium",score:90},
-{name:"Eria",country:"Belgium",score:89},
-{name:"Dofault",country:"Belgium",score:88},
-{name:"Soulja",country:"Belgium",score:86},
-{name:"Snappie",country:"Belgium",score:83},
-{name:"Arthaniir",country:"Belgium",score:82},
-{name:"Rasg",country:"Belgium",score:82},
-{name:"Sano",country:"Belgium",score:82},
-{name:"Aqlx",country:"Belgium",score:81},
-{name:"Youri",country:"Belgium",score:80},
-{name:"Vikentiyy",country:"Belgium",score:80},
-{name:"Bvddy",country:"Belgium",score:83},
-{name:"Olumsy",country:"Belgium",score:78},
-{name:"Ryou",country:"Belgium",score:72},
-{name:"Atome",country:"Belgium",score:70},
-{name:"Bepeze",country:"Brazil",score:87},
-{name:"Mtat",country:"Brazil",score:87},
-{name:"Radiaxo",country:"Brazil",score:83},
-{name:"Kyle",country:"Brazil",score:80},
-{name:"Mickbzh",country:"Bretagne",score:68},
-{name:"Carljr",country:"Canada",score:95},
-{name:"Lingo",country:"Canada",score:89},
-{name:"Abadpcgamer",country:"Canada",score:86},
-{name:"Raistlin",country:"Canada",score:86},
-{name:"Zodiark",country:"Canada",score:86},
-{name:"Cinn",country:"Canada",score:85},
-{name:"Thombern",country:"Canada",score:84},
-{name:"Mathyper",country:"Canada",score:80},
-{name:"Ozy",country:"Canada",score:80},
-{name:"Stokeine",country:"Canada",score:75},
-{name:"Charles",country:"Colombia",score:86},
-{name:"Min2002",country:"South Korea",score:87},
-{name:"Sky",country:"Croatia",score:86},
-{name:"Hefest",country:"Croatia",score:85},
-{name:"Tekky",country:"Croatia",score:85},
-{name:"Razii",country:"Croatia",score:82},
-{name:"Fredwolf",country:"Denmark",score:88},
-{name:"Solivagantz",country:"Denmark",score:87},
-{name:"Dunste",country:"Denmark",score:83},
-{name:"Nikolech",country:"Denmark",score:81},
-{name:"Woop",country:"Denmark",score:81},
-{name:"Jakeray",country:"Denmark",score:80},
-{name:"Steg",country:"Scotland",score:78},
-{name:"Javiflyer",country:"Spain",score:88},
-{name:"Nauu",country:"Spain",score:86},
-{name:"Lokogz",country:"Spain",score:85},
-{name:"Yeims",country:"Spain",score:85},
-{name:"Lnko",country:"Spain",score:82},
-{name:"Sandder",country:"Estonia",score:84},
-{name:"Kakne",country:"United States",score:87},
-{name:"Sophie Ice",country:"United States",score:86},
-{name:"Shieldbandit",country:"United States",score:84},
-{name:"Authortime",country:"United States",score:83},
-{name:"Nixotica",country:"United States",score:83},
-{name:"Novastxr",country:"United States",score:83},
-{name:"Skifreak",country:"United States",score:81},
-{name:"Catcurlyfries",country:"United States",score:80},
-{name:"Neal",country:"United States",score:80},
-{name:"F6_T",country:"United States",score:60},
-{name:"Simo900",country:"Finland",score:87},
-{name:"Cptsalmon",country:"Finland",score:85},
-{name:"Miquatro",country:"Finland",score:85},
-{name:"Bren",country:"France",score:94},
-{name:"Otaaaq",country:"France",score:93},
-{name:"Gwen",country:"France",score:92},
-{name:"Jojo Le Pro",country:"France",score:92},
-{name:"Aurel",country:"France",score:91},
-{name:"Binks",country:"France",score:91},
-{name:"Touf",country:"France",score:90},
-{name:"Cap",country:"France",score:89},
-{name:"Mage Fromage",country:"France",score:89},
-{name:"Papou",country:"France",score:89},
-{name:"Wosile",country:"France",score:89},
-{name:"Ender",country:"France",score:88},
-{name:"Morovach",country:"France",score:88},
-{name:"Nayko",country:"France",score:88},
-{name:"Neko",country:"France",score:88},
-{name:"Shcr",country:"France",score:88},
-{name:"Cocow",country:"France",score:87},
-{name:"Feed",country:"France",score:87},
-{name:"Link",country:"France",score:87},
-{name:"Rotrex",country:"France",score:87},
-{name:"Sebi",country:"France",score:87},
-{name:"Supercarlouf",country:"France",score:87},
-{name:"Loupphok",country:"France",score:87},
-{name:"Zypher",country:"France",score:87},
-{name:"Vortex",country:"France",score:86},
-{name:"Cruzial",country:"France",score:86},
-{name:"Kerberos",country:"France",score:86},
-{name:"Richie",country:"France",score:86},
-{name:"Roquett",country:"France",score:86},
-{name:"Scarpurp",country:"France",score:86},
-{name:"Viiper",country:"France",score:86},
-{name:"Worker",country:"France",score:86},
-{name:"Yashabad",country:"France",score:86},
-{name:"Vortax",country:"France",score:86},
-{name:"Chamow",country:"France",score:85},
-{name:"Haedra",country:"France",score:85},
-{name:"Ice",country:"France",score:85},
-{name:"Insanity",country:"France",score:85},
-{name:"Lyker",country:"France",score:85},
-{name:"Mimojr",country:"France",score:85},
-{name:"Nabla",country:"France",score:85},
-{name:"Navi",country:"France",score:85},
-{name:"Omnipotz",country:"France",score:85},
-{name:"Vrinho",country:"France",score:85},
-{name:"Ynos",country:"France",score:85},
-{name:"Acide",country:"France",score:84},
-{name:"Artisse",country:"France",score:84},
-{name:"Bandj",country:"France",score:84},
-{name:"Brandom",country:"France",score:84},
-{name:"Broly",country:"France",score:84},
-{name:"Dam",country:"France",score:84},
-{name:"Dionysos",country:"France",score:84},
-{name:"Glast",country:"France",score:84},
-{name:"Holo",country:"France",score:84},
-{name:"Legu",country:"France",score:84},
-{name:"Novu",country:"France",score:84},
-{name:"Roa",country:"France",score:84},
-{name:"Sheinimi",country:"France",score:84},
-{name:"Tacos",country:"France",score:84},
-{name:"Tona",country:"France",score:84},
-{name:"Xerar",country:"France",score:84},
-{name:"Yoyo",country:"France",score:84},
-{name:"Tunixx",country:"France",score:84},
-{name:"Quentin43",country:"France",score:84},
-{name:"7Ven",country:"France",score:83},
-{name:"Alfadream",country:"France",score:83},
-{name:"Badlulu",country:"France",score:83},
-{name:"Dazzle",country:"France",score:83},
-{name:"Hergam",country:"France",score:83},
-{name:"Hugo220",country:"France",score:83},
-{name:"Joymilo",country:"France",score:83},
-{name:"Jurix",country:"France",score:83},
-{name:"Micka",country:"France",score:83},
-{name:"Monkey",country:"France",score:83},
-{name:"Neziium",country:"France",score:83},
-{name:"Plombz",country:"France",score:83},
-{name:"Ryuhax",country:"France",score:83},
-{name:"Samz",country:"France",score:83},
-{name:"Sapi",country:"France",score:83},
-{name:"Shadenis",country:"France",score:83},
-{name:"Siqaa",country:"France",score:83},
-{name:"Sly",country:"France",score:83},
-{name:"Speedself",country:"France",score:83},
-{name:"Thomas Jean",country:"France",score:83},
-{name:"Tjalic",country:"France",score:83},
-{name:"Wiilox",country:"France",score:83},
-{name:"Xiro",country:"France",score:83},
-{name:"Goldy",country:"France",score:83},
-{name:"Anige",country:"France",score:82},
-{name:"Atalata",country:"France",score:82},
-{name:"Aynyx",country:"France",score:82},
-{name:"Fatinho",country:"France",score:82},
-{name:"Mattouzz",country:"France",score:82},
-{name:"Melioo",country:"France",score:82},
-{name:"Mericle",country:"France",score:82},
-{name:"Oxid",country:"France",score:82},
-{name:"Rin",country:"France",score:82},
-{name:"Salty",country:"France",score:82},
-{name:"Sheinex",country:"France",score:82},
-{name:"Shpluck",country:"France",score:82},
-{name:"Skuen",country:"France",score:82},
-{name:"Toxiko",country:"France",score:82},
-{name:"Vulnerra",country:"France",score:82},
-{name:"Wazyx",country:"France",score:82},
-{name:"Wingobear",country:"France",score:82},
-{name:"Xertox",country:"France",score:82},
-{name:"Zenyy",country:"France",score:82},
-{name:"Degstm",country:"France",score:82},
-{name:"Bolet",country:"France",score:82},
-{name:"Ayako",country:"France",score:81},
-{name:"Dam Pouleto",country:"France",score:81},
-{name:"Dark62",country:"France",score:81},
-{name:"Doyle",country:"France",score:81},
-{name:"Fenrir",country:"France",score:81},
-{name:"Holfreak",country:"France",score:81},
-{name:"Jean René",country:"France",score:81},
-{name:"Maxtrack",country:"France",score:81},
-{name:"Micmo",country:"France",score:81},
-{name:"Nekojim",country:"France",score:81},
-{name:"Ringoa",country:"France",score:81},
-{name:"Snow",country:"France",score:81},
-{name:"Supernowa",country:"France",score:81},
-{name:"Taak",country:"France",score:81},
-{name:"Thedarkwix",country:"France",score:81},
-{name:"Utaa",country:"France",score:81},
-{name:"Wawa",country:"France",score:81},
-{name:"Bubulles",country:"France",score:81},
-{name:"Bmx",country:"France",score:80},
-{name:"Choum",country:"France",score:80},
-{name:"Clm",country:"France",score:80},
-{name:"Dydy",country:"France",score:80},
-{name:"Fontur",country:"France",score:80},
-{name:"Ggeek",country:"France",score:80},
-{name:"Headmasterkill",country:"France",score:80},
-{name:"Kakkou",country:"France",score:80},
-{name:"Kama",country:"France",score:80},
-{name:"Karma",country:"France",score:80},
-{name:"Korch",country:"France",score:80},
-{name:"Lukario",country:"France",score:80},
-{name:"Mariogalaxy",country:"France",score:80},
-{name:"Nath",country:"France",score:80},
-{name:"Niko",country:"France",score:80},
-{name:"Nrgz",country:"France",score:80},
-{name:"Opale",country:"France",score:80},
-{name:"Roquete",country:"France",score:80},
-{name:"Sabz",country:"France",score:80},
-{name:"Sam",country:"France",score:80},
-{name:"Skydruw",country:"France",score:80},
-{name:"Snatix",country:"France",score:80},
-{name:"Tankrom",country:"France",score:80},
-{name:"Tommy",country:"France",score:80},
-{name:"Trikz",country:"France",score:80},
-{name:"Viinch",country:"France",score:80},
-{name:"Ujimaa",country:"France",score:80},
-{name:"Walegen",country:"France",score:80},
-{name:"Airwam",country:"France",score:79},
-{name:"Coz",country:"France",score:79},
-{name:"Darker",country:"France",score:79},
-{name:"Fayeur",country:"France",score:79},
-{name:"Heav",country:"France",score:88},
-{name:"Jingatak",country:"France",score:79},
-{name:"Lattack",country:"France",score:79},
-{name:"Mixmod",country:"France",score:79},
-{name:"Nitrofeint",country:"France",score:79},
-{name:"Warl",country:"France",score:79},
-{name:"Iesauka",country:"France",score:79},
-{name:"Sympthome",country:"France",score:79},
-{name:"Auwrah",country:"France",score:78},
-{name:"Flow",country:"France",score:78},
-{name:"Gold",country:"France",score:78},
-{name:"Jam",country:"France",score:78},
-{name:"Qiraj",country:"France",score:78},
-{name:"Telnei",country:"France",score:78},
-{name:"Troulet",country:"France",score:78},
-{name:"Viilom",country:"France",score:78},
-{name:"Azion",country:"France",score:76},
-{name:"Noby",country:"France",score:76},
-{name:"Astalet",country:"France",score:76},
-{name:"Chayann",country:"France",score:75},
-{name:"Ciremyxx",country:"France",score:75},
-{name:"Elix'Ir",country:"France",score:75},
-{name:"Heathcliff",country:"France",score:75},
-{name:"Helzinka",country:"France",score:75},
-{name:"Lueces",country:"France",score:75},
-{name:"Velom",country:"France",score:75},
-{name:"Nicsoby",country:"France",score:74},
-{name:"Slowpiou",country:"France",score:74},
-{name:"Tunder",country:"France",score:74},
-{name:"Zerator",country:"France",score:74},
-{name:"Rh3Torique",country:"France",score:73},
-{name:"Senjojoveler",country:"France",score:73},
-{name:"Bayron",country:"France",score:72},
-{name:"Teckso",country:"France",score:72},
-{name:"Tseko",country:"France",score:72},
-{name:"Virtuoz",country:"France",score:72},
-{name:"Yeager",country:"France",score:72},
-{name:"Yeus",country:"France",score:72},
-{name:"Baanz",country:"France",score:71},
-{name:"Blackdream",country:"France",score:71},
-{name:"Frizz",country:"France",score:71},
-{name:"Obito",country:"France",score:71},
-{name:"Sawki",country:"France",score:71},
-{name:"Dantafass",country:"France",score:70},
-{name:"Lulub",country:"France",score:70},
-{name:"Moutronis",country:"France",score:70},
-{name:"Nicob",country:"France",score:70},
-{name:"Tomote",country:"France",score:70},
-{name:"Toppen",country:"France",score:70},
-{name:"Vevolution",country:"France",score:70},
-{name:"Nitralis",country:"France",score:70},
-{name:"Belette",country:"France",score:69},
-{name:"Emilien",country:"France",score:69},
-{name:"Chbidou",country:"France",score:68},
-{name:"Dagos",country:"France",score:68},
-{name:"Salamanka",country:"France",score:68},
-{name:"Kuumba",country:"France",score:68},
-{name:"Pépite",country:"France",score:67},
-{name:"Polycopy",country:"France",score:67},
-{name:"Selrahc",country:"France",score:66},
-{name:"Koble",country:"France",score:65},
-{name:"Killzerax",country:"France",score:64},
-{name:"Orge",country:"France",score:64},
-{name:"Paulo",country:"France",score:64},
-{name:"Bimob",country:"France",score:63},
-{name:"Kamikalsh",country:"France",score:63},
-{name:"Alancommeunaigle",country:"France",score:62},
-{name:"Chtiwid",country:"France",score:62},
-{name:"Hartonaf",country:"France",score:62},
-{name:"Ludow",country:"France",score:61},
-{name:"Lepaing",country:"France",score:78},
-{name:"Joker",country:"France",score:59},
-{name:"Savaty",country:"France",score:53},
-{name:"Cacacup",country:"France",score:49},
-{name:"Aimant",country:"France",score:48},
-{name:"Kann",country:"France",score:40},
-{name:"Tylerzz",country:"France",score:37},
-{name:"Sardoche",country:"France",score:16},
-{name:"Kilou",country:"France",score:14},
-{name:"Twisto",country:"France",score:11},
-{name:"Palmitos",country:"Haiti",score:72},
-{name:"Pusztitopako",country:"Hungary",score:90},
-{name:"Blood",country:"Hungary",score:82},
-{name:"Nottcurious",country:"India",score:84},
-{name:"Iridium",country:"India",score:82},
-{name:"Spark",country:"India",score:80},
-{name:"Babzify",country:"Ireland",score:85},
-{name:"Toto",country:"Iceland",score:81},
-{name:"Dubby",country:"Italia",score:84},
-{name:"Iprime",country:"Italia",score:84},
-{name:"Auris",country:"Italia",score:82},
-{name:"Gladavicom",country:"Italia",score:82},
-{name:"Bluejinx",country:"Italia",score:81},
-{name:"Loumar",country:"Italia",score:81},
-{name:"Matp",country:"Italia",score:81},
-{name:"Shadow",country:"Italia",score:80},
-{name:"Mellowja",country:"Jamaica",score:80},
-{name:"Quete",country:"Kiribati",score:90},
-{name:"Nastibe",country:"Laos",score:69},
-{name:"Karlukki",country:"Latvia",score:80},
-{name:"Srk",country:"Latvia",score:71},
-{name:"Bits",country:"Lithuania",score:86},
-{name:"Ziren",country:"Lithuania",score:85},
-{name:"Kem",country:"Lithuania",score:84},
-{name:"Morhpeo",country:"Luxembourg",score:83},
-{name:"Jaja",country:"Morocco",score:82},
-{name:"Macroblokos",country:"Mexico",score:90},
-{name:"Nikshar",country:"Mongolia",score:70},
-{name:"Bergie",country:"Norway",score:89},
-{name:"Levonn",country:"Norway",score:89},
-{name:"Intax",country:"Norway",score:87},
-{name:"Andy",country:"Norway",score:86},
-{name:"Cinxsss",country:"Norway",score:86},
-{name:"Erizel",country:"Norway",score:86},
-{name:"Catbagasm",country:"Norway",score:84},
-{name:"Andybaguette",country:"Norway",score:83},
-{name:"Keffin",country:"Norway",score:81},
-{name:"Kvikk",country:"Norway",score:75},
-{name:"Majijej",country:"Norway",score:69},
-{name:"Papetvaudois",country:"Norway",score:61},
-{name:"Wirtual",country:"Norway",score:34},
-{name:"Baiwack",country:"New Zealand",score:88},
-{name:"Jswag",country:"New Zealand",score:85},
-{name:"Mentoz",country:"Panama",score:78},
-{name:"Denniss",country:"Netherlands",score:89},
-{name:"Spammiej",country:"Netherlands",score:89},
-{name:"Complex",country:"Netherlands",score:88},
-{name:"Koenz",country:"Netherlands",score:88},
-{name:"Darkestsentinel",country:"Netherlands",score:87},
-{name:"Jan",country:"Netherlands",score:87},
-{name:"Tarpor",country:"Netherlands",score:87},
-{name:"Vixxa",country:"Netherlands",score:87},
-{name:"Xenogear",country:"Netherlands",score:87},
-{name:"Javzo",country:"Netherlands",score:86},
-{name:"Paardenvechter",country:"Netherlands",score:85},
-{name:"Alex W",country:"Netherlands",score:84},
-{name:"Marijntje",country:"Netherlands",score:84},
-{name:"Poepboer",country:"Netherlands",score:84},
-{name:"Stufts",country:"Netherlands",score:84},
-{name:"Astronaut",country:"Netherlands",score:82},
-{name:"Henkisme",country:"Netherlands",score:81},
-{name:"Knyntsje",country:"Netherlands",score:80},
-{name:"Mitra",country:"Netherlands",score:80},
-{name:"Pug",country:"Netherlands",score:80},
-{name:"Timmys",country:"Netherlands",score:80},
-{name:"Zeemuis",country:"Netherlands",score:80},
-{name:"Jolypop",country:"Netherlands",score:77},
-{name:"Jussy",country:"Netherlands",score:76},
-{name:"Lumar",country:"Netherlands",score:74},
-{name:"Acrose",country:"Wales",score:89},
-{name:"Hendo",country:"Wales",score:82},
-{name:"Mime",country:"Poland",score:92},
-{name:"Evon",country:"Poland",score:88},
-{name:"Neon",country:"Poland",score:88},
-{name:"Key",country:"Poland",score:87},
-{name:"Magorian",country:"Poland",score:86},
-{name:"Korniee",country:"Poland",score:85},
-{name:"Plastorex",country:"Poland",score:84},
-{name:"Demotivator",country:"Poland",score:83},
-{name:"Nalax",country:"Poland",score:81},
-{name:"Nothing",country:"Poland",score:81},
-{name:"Rotaker",country:"Poland",score:80},
-{name:"Moriah",country:"Portugal",score:88},
-{name:"Mawi",country:"Portugal",score:86},
-{name:"Maniaaaac",country:"Portugal",score:85},
-{name:"Default",country:"Portugal",score:84},
-{name:"Paull",country:"Portugal",score:83},
-{name:"Nevermind",country:"Romania",score:85},
-{name:"Sqlc",country:"Russia",score:89},
-{name:"Na1Ve",country:"Russia",score:88},
-{name:"Neuro",country:"Russia",score:87},
-{name:"Norbinarus",country:"Russia",score:84},
-{name:"Nitech",country:"Russia",score:82},
-{name:"Leaf",country:"Russia",score:81},
-{name:"Walten",country:"Russia",score:71},
-{name:"Loso",country:"Slovakia",score:89},
-{name:"Tween",country:"Slovakia",score:88},
-{name:"Zimzalabiim",country:"Slovakia",score:85},
-{name:"Jaakaah",country:"Slovenia",score:86},
-{name:"Mantaaa",country:"Slovenia",score:80},
-{name:"Phoebe",country:"Sweden",score:92},
-{name:"Jozo",country:"Sweden",score:89},
-{name:"Karjen",country:"Sweden",score:89},
-{name:"Frostbeule",country:"Sweden",score:88},
-{name:"Brinkenn",country:"Sweden",score:87},
-{name:"Keby",country:"Sweden",score:86},
-{name:"Kopro",country:"Sweden",score:85},
-{name:"Molle",country:"Sweden",score:85},
-{name:"Susuwi",country:"Sweden",score:83},
-{name:"Iihugo",country:"Sweden",score:82},
-{name:"Willeknas",country:"Sweden",score:79},
-{name:"Henkan",country:"Sweden",score:72},
-{name:"Affi",country:"Switzerland",score:90},
-{name:"Yannex",country:"Switzerland",score:87},
-{name:"Siroze",country:"Switzerland",score:84},
-{name:"Ikewolf",country:"Switzerland",score:83},
-{name:"Neodym",country:"Switzerland",score:82},
-{name:"Jitsky",country:"Switzerland",score:80},
-{name:"Kezskia",country:"Switzerland",score:76},
-{name:"Banano",country:"Switzerland",score:74},
-{name:"Xstrab",country:"Switzerland",score:70},
-{name:"Rag",country:"Switzerland",score:64},
-{name:"Hakkijunior",country:"Czech Republic",score:88},
-{name:"Kappa",country:"Czech Republic",score:86},
-{name:"Elconn",country:"Czech Republic",score:93},
-{name:"Huba Bibi",country:"Turkey",score:86},
-{name:"Ignite",country:"Turkey",score:86},
-{name:"Huso",country:"Turkey",score:85},
-{name:"Birdie",country:"Turkey",score:83},
-{name:"Cemko",country:"Turkey",score:82},
-{name:"Rook1E",country:"Uruguay",score:81},
-{name:"Natuss_Gluten",country:"Yemen",score:91},
-{name:"Chacalou",country:"Yemen",score:74},
-{name:"Zentrian",country:"Sweden",score:87},
-{name:"Crxly",country:"Canada",score:82},
-{name:"Aapril",country:"France",score:80},
-{name:"Drole2Con",country:"France",score:81},
-{name:"Rozu",country:"Germany",score:84},
-{name:"Shengar",country:"Czech Republic",score:82},
-{name:"Rango",country:"Ireland",score:75},
-{name:"Bogwarrior9",country:"Ireland",score:84},
-{name:"TheRenoFella",country:"Ireland",score:82},
-{name:"Derolt",country:"Brazil",score:84},
-{name:"Ragnarinho",country:"Turkey",score:80},
-{name:"Vingummi101",country:"Denmark",score:83},
-{name:"Sharkyn",country:"Czech Republic",score:81},
-{name:"Shcr",country:"France",score:88},
-{name:"Poker",country:"Austria",score:86},
-{name:"Xertzy",country:"Belgium",score:85},
-{name:"Liquid",country:"Croatia",score:85},
-{name:"Mertzjr",country:"Denmark",score:82},
-{name:"Radiance",country:"Denmark",score:84},
-{name:"Insane",country:"Finland",score:86},
-{name:"Tuduttuduu",country:"Finland",score:84},
-{name:"Tmdisk",country:"Germany",score:86},
-{name:"Chucky",country:"France",score:65},
-{name:"Trilisk",country:"France",score:81},
-{name:"Shorty Gray",country:"Slovakia",score:84}
+const RAW_DATA = `
+Carljr	98	Canada	world champion
+Chacalou	97	Yemen	icon
+Pac	96	England	world champion
+Granady	96	Germany	streamers
+Carljr	95	Canada	regular
+Frostbeule	95	Sweden	world champion
+Spammiej	95	Netherlands	world champion
+Xenogear	95	Netherlands	world champion
+Kappa	95	Czech republic	world champion
+Supercarlouf	95	France	world champion
+Bren	95	France	world champion
+Otaaaq	95	France	world champion
+Bergie	95	Germany	world champion
+Hakkijuior	95	Slovakia	world champion
+Bren	94	France	regular
+Granady	94	Germany	regular
+Pac	94	England	regular
+Elconn	93	Czech republic	regular
+Epos	93	England	regular
+Mudda	93	Australia	regular
+Otaaaq	93	France	regular
+Gwen	92	France	regular
+Jojo le pro	92	France	regular
+Mime	92	Poland	regular
+Phoebe	92	Sweden	regular
+Spammiej	92	Netherlands	regular
+Aurel	91	France	regular
+Binks	91	France	regular
+Cozzer04	91	England	regular
+Massa	91	Germany	regular
+Natuss_gluten	91	Yemen	regular
+Skandear	91	Belgium	regular
+Affi	90	Switzerland	regular
+Hefest	90	Croatia	regular
+Macroblokos	90	Mexico	regular
+Piranha	90	Germany	regular
+Pusztitopako	90	Hungary	regular
+Quete	90	Kiribati	regular
+Scrapie	90	Belgium	regular
+Touf	90	France	regular
+Eria	90	Belgium	survivor
+Marius	90	Germany	twenty
+Riolu	90	Germany	flashback
+Acrose	89	Wales	regular
+Bergie	89	Norway	regular
+Cap	89	France	regular
+Denniss	89	Netherlands	regular
+Eria	89	Belgium	regular
+Habe	89	Germany	regular
+Insanity	89	France	regular
+Jdon	89	England	regular
+Jozo	89	Sweden	regular
+Karjen	89	Sweden	regular
+Levonn	89	Norway	regular
+Lingo	89	Canada	regular
+Loso	89	Slovakia	regular
+Mage fromage	89	France	regular
+Marius	89	Germany	regular
+Papou	89	France	regular
+Ratchet	89	Germany	regular
+Riolu	89	Germany	regular
+Sqlc	89	Russia	regular
+Wosile	89	France	regular
+Zypher	89	France	streamers
+Birdie	89	Turkey	streamers
+Tarpor	89	Netherlands	streamers
+Baiwack	88	New zealand	regular
+Chroma	88	Germany	regular
+Complex	88	Netherlands	regular
+Deluluna	88	France	regular
+Dofault	88	Belgium	regular
+Down	88	Germany	regular
+Ender	88	France	regular
+Evon	88	Poland	regular
+Fredwolf	88	Denmark	regular
+Frostbeule	88	Sweden	regular
+Gatito	88	Spain	regular
+Glast	88	France	regular
+Hakkijunior	88	Czech republic	regular
+Heav	88	France	regular
+Holo	88	France	regular
+Hyll	88	Czech republic	regular
+Ikewolf	88	Switzerland	regular
+Jave	88	Sweden	regular
+Javiflyer	88	Spain	regular
+Karlberg	88	Sweden	regular
+Kbabuser	88	United states	regular
+Klovni	88	Finland	regular
+Koenz	88	Netherlands	regular
+Kopro	88	Sweden	regular
+Milmy	88	Czech republic	regular
+Moriah	88	Portugal	regular
+Morovach	88	France	regular
+Mury	88	Czech republic	regular
+Na1ve	88	Russia	regular
+Nayko	88	France	regular
+Neko	88	France	regular
+Neon	88	Poland	regular
+Nieq	88	Netherlands	regular
+Nova	88	Australia	regular
+Novu	88	France	regular
+Nuprime	88	Germany	regular
+Paull	88	Portugal	regular
+Propanoia	88	France	regular
+Quibz	88	England	regular
+Rollstuhlkaiser	88	Germany	regular
+Schmaniol	88	Germany	regular
+Shcr	88	French	regular
+Shcr	88	France	regular
+Teuflum	88	Germany	regular
+Tween	88	Slovakia	regular
+Viiper	88	France	degueux
+Vortex	88	France	degueux
+Rollstuhlkaiser	88	Germany	tribute
+Azion	87	France	regular
+Bepeze	87	Brazil	regular
+Bestie	87	Czech republic	regular
+Birdie	87	Turkey	regular
+Bmqs	87	Canada	regular
+Bozbez	87	England	regular
+Brinkenn	87	Sweden	regular
+Cocow	87	France	regular
+Darkestsentinel	87	Netherlands	regular
+Dexter	87	Germany	regular
+Feed	87	France	regular
+Fluewein	87	Germany	regular
+Garikul	87	Russia	regular
+Hendo	87	Wales	regular
+Imot	87	Germany	regular
+Intax	87	Norway	regular
+Itzryan	87	England	regular
+Jan	87	Netherlands	regular
+Josh1248	87	England	regular
+Jurix	87	France	regular
+Kakne	87	United states	regular
+Kandzsika	87	Hungary	regular
+Kappariley	87	Ireland	regular
+Key	87	Poland	regular
+Laurids	87	Denmark	regular
+Link	87	France	regular
+Loupphok	87	France	regular
+Marsli	87	Germany	regular
+Min2002	87	South korea	regular
+Mtat	87	Brazil	regular
+Neuro	87	Russia	regular
+Nikolech	87	Denmark	regular
+Nixotica	87	United states	regular
+Norman	87	Germany	regular
+Purple	87	Germany	regular
+Quinn	87	England	regular
+Ramy	87	Australia	regular
+Redbolt	87	Australia	regular
+Revolution	87	Germany	regular
+Robin	87	Germany	regular
+Roquete	87	France	regular
+Rotrex	87	France	regular
+Rychlik	87	Czech republic	regular
+Sebi	87	France	regular
+Shark	87	Germany	regular
+Shorty	87	Germany	regular
+Simo900	87	Finland	regular
+Solivagantz	87	Denmark	regular
+Supercarlouf	87	France	regular
+Tarpor	87	Netherlands	regular
+Tjalic	87	France	regular
+Vixxa	87	Netherlands	regular
+Whizzy	87	England	regular
+Xenogear	87	Netherlands	regular
+Yannex	87	Switzerland	regular
+Zentrian	87	Sweden	regular
+Zypher	87	France	regular
+Ynos	87	France	degueux
+Abadpcgamer	86	Canada	regular
+Amongus	86	United states	regular
+Andy	86	Norway	regular
+Andybaguette	86	Norway	regular
+Awayfridish	86	Italy	regular
+Barbos	86	Germany	regular
+Bead	86	Honduras	regular
+Bimy	86	Russia	regular
+Bits	86	Lithuania	regular
+Charles	86	Colombia	regular
+Cinxsss	86	Norway	regular
+Cruzial	86	France	regular
+Danikb	86	Czech republic	regular
+Erizel	86	Norway	regular
+F6t	86	Update	regular
+Huba bibi	86	Turkey	regular
+Ignite	86	Turkey	regular
+Ikarus	86	Austria	regular
+Ins	86	Germany	regular
+Insane	86	Finland	regular
+Intellectrick	86	Netherlands	regular
+Jaakaah	86	Slovenia	regular
+Javzo	86	Netherlands	regular
+Kama	86	France	regular
+Kappa	86	Czech republic	regular
+Keby	86	Sweden	regular
+Kelven	86	Malta	regular
+Kerberos	86	France	regular
+Letzter	86	Germany	regular
+Magorian	86	Poland	regular
+Mawi	86	Portugal	regular
+Melioo	86	France	regular
+Morhpeo	86	Luxembourg	regular
+Nauu	86	Spain	regular
+Nitech	86	Russia	regular
+Noiszia	86	Argentina	regular
+Opale	86	France	regular
+Panda	86	France	regular
+Pekingente	86	Germany	regular
+Poker	86	Austria	regular
+Raistlin	86	Canada	regular
+Raizo	86	Slovakia	regular
+Richie	86	France	regular
+Ricso	86	Hungary	regular
+Roquett	86	France	regular
+Scarpurp	86	France	regular
+Seraf	86	Czech republic	regular
+Sheinex	86	France	regular
+Sky	86	Croatia	regular
+Softyd	86	Finland	regular
+Sophie ice	86	United states	regular
+Soulja	86	Belgium	regular
+Tmdisk	86	Germany	regular
+Viiper	86	France	regular
+Vortax	86	France	regular
+Vortex	86	France	regular
+Worker	86	France	regular
+Xemlanx	86	Norway	regular
+Yamii	86	Germany	regular
+Yashabad	86	France	regular
+Zodiark	86	Canada	regular
+Bandj	86	France	degueux
+Ice	86	France	survivor
+Ynos	86	France	survivor
+Alphaa	85	France	regular
+Amaterasu	85	Germany	regular
+Babzify	85	Ireland	regular
+Betatoast	85	Germany	regular
+Bobo247	85	Italy	regular
+Bresso	85	Germany	regular
+Burntbagels	85	England	regular
+Carelesscobra	85	Australia	regular
+Chamow	85	France	regular
+Cinn	85	Canada	regular
+Cptsalmon	85	Finland	regular
+Criszane	85	Italy	regular
+Darklight	85	England	regular
+Dummy	85	United states	regular
+Eger	85	Hungary	regular
+Ener	85	France	regular
+Enibeti	85	Germany	regular
+Haedra	85	France	regular
+Huso	85	Turkey	regular
+Hydro	85	United states	regular
+Iampd	85	Germany	regular
+Ice	85	France	regular
+Idoless	85	England	regular
+Ixawai	85	France	regular
+Jandro	85	United states	regular
+Jean rené	85	France	regular
+Jswag	85	New zealand	regular
+Kopatych	85	Russia	regular
+Korniee	85	Poland	regular
+Liffey	85	Ireland	regular
+Linkmax	85	New zealand	regular
+Liquid	85	Croatia	regular
+Lokogz	85	Spain	regular
+Lyker	85	France	regular
+Maniaaaac	85	Portugal	regular
+Manox	85	Brazil	regular
+Mariogalaxy	85	France	regular
+Mickbzh	85	Brittany	regular
+Mimojr	85	France	regular
+Minceaz	85	United states	regular
+Miquatro	85	Finland	regular
+Molle	85	Sweden	regular
+Nabla	85	France	regular
+Navi	85	France	regular
+Nevermind	85	Romania	regular
+Nitrofeint	85	France	regular
+Nx	85	England	regular
+Obitom	85	France	regular
+Omnipotz	85	France	regular
+Oxid	85	Germany	regular
+Paardenvechter	85	Netherlands	regular
+Patrose	85	Germany	regular
+Pixels	85	Turkey	regular
+Plombz	85	France	regular
+Pug	85	Netherlands	regular
+R1nt3	85	Scotland	regular
+Samifying	85	Austria	regular
+Smithy	85	Australia	regular
+Tekky	85	Croatia	regular
+Viinch	85	France	regular
+Vrinho	85	France	regular
+Walegen	85	France	regular
+Walten	85	Russia	regular
+Wingobear	85	France	regular
+Woop	85	Denmark	regular
+Xertzy	85	Belgium	regular
+Yeims	85	Spain	regular
+Ynos	85	France	regular
+Zimzalabiim	85	Slovakia	regular
+Ziren	85	Lithuania	regular
+Xiro	85	France	degueux
+Tunixx	85	France	survivor
+Acide	84	France	regular
+Alex w	84	Netherlands	regular
+Artisse	84	France	regular
+Bandj	84	France	regular
+Baupro	84	Argentina	regular
+Bogwarrior9	84	Ireland	regular
+Brandom	84	France	regular
+Broly	84	France	regular
+Catbagasm	84	Norway	regular
+Cjay	84	Netherlands	regular
+Crosshairs	84	Azerbaijan	regular
+Dam	84	France	regular
+Dam pouleto	84	France	regular
+Dark62	84	France	regular
+Default	84	Portugal	regular
+Derolt	84	Brazil	regular
+Deska	84	Poland	regular
+Dionysos	84	France	regular
+Dubby	84	Italy	regular
+Hobbit	84	Germany	regular
+Hoelbi	84	Austria	regular
+Iprime	84	Italy	regular
+Ixxonn	84	Croatia	regular
+Joltysonic	84	Spain	regular
+Kem	84	Lithuania	regular
+Killian	84	Ireland	regular
+Lars	84	Germany	regular
+Legu	84	France	regular
+Louzzix	84	France	regular
+Lueces	84	France	regular
+Lukario	84	France	regular
+Maciey	84	Poland	regular
+Manskiptruck	84	England	regular
+Marijntje	84	Netherlands	regular
+Mysterietm	84	Denmark	regular
+Norbinarus	84	Russia	regular
+Nottcurious	84	India	regular
+Omega	84	France	regular
+Phegley	84	United states	regular
+Plastorex	84	Poland	regular
+Poepboer	84	Netherlands	regular
+Quentin43	84	France	regular
+Racehans	84	Germany	regular
+Radiance	84	Denmark	regular
+Roa	84	France	regular
+Rollin	84	Austria	regular
+Rozu	84	Germany	regular
+Sahtel	84	Estonia	regular
+Sandder	84	Estonia	regular
+Sheinimi	84	France	regular
+Shieldbandit	84	United states	regular
+Shorty gray	84	Slovakia	regular
+Simplynick	84	Australia	regular
+Siroze	84	Switzerland	regular
+Skifreak	84	United states	regular
+Stufts	84	Netherlands	regular
+Tacos	84	France	regular
+Tankrom	84	France	regular
+Thijnhd	84	Netherlands	regular
+Thombern	84	Canada	regular
+Tommy	84	France	regular
+Tona	84	France	regular
+Tram15	84	Estonia	regular
+Tricky	84	France	regular
+Trident	84	South africa	regular
+Tuduttuduu	84	Finland	regular
+Tunixx	84	France	regular
+Vekisis	84	United states	regular
+Warl	84	France	regular
+Xerar	84	France	regular
+Xetins	84	France	regular
+Yoyo	84	France	regular
+Zburst	84	Portugal	regular
+Zedrox	84	France	regular
+Bolet	84	France	streamers
+Fatinho	84	France	degueux
+7ven	83	France	regular
+Ackster	83	France	regular
+Alfadream	83	France	regular
+Arne	83	Lithuania	regular
+Asse	83	Austria	regular
+Authortime	83	United states	regular
+Badlulu	83	France	regular
+Bvddy	83	Belgium	regular
+Dazzle	83	France	regular
+Demotivator	83	Poland	regular
+Dunste	83	Denmark	regular
+Faqez	83	Austria	regular
+Frankthehamster	83	Czech republic	regular
+Goldy	83	France	regular
+Gumoly	83	Austria	regular
+Hayiom	83	Germany	regular
+Hergam	83	France	regular
+Hope	83	United states	regular
+Hugo220	83	France	regular
+Hyggebis	83	Denmark	regular
+Joymilo	83	France	regular
+Kluhtu	83	Russia	regular
+Kuda	83	Indonesia	regular
+Luckersturbo	83	Germany	regular
+Lukefast	83	Italy	regular
+Mariina	83	Austria	regular
+Micka	83	France	regular
+Monkey	83	France	regular
+Neziium	83	France	regular
+Novastxr	83	United states	regular
+Platy	83	Germany	regular
+Plink	83	Netherlands	regular
+Radiaxo	83	Brazil	regular
+Ryuhax	83	France	regular
+Sabre	83	England	regular
+Samz	83	France	regular
+Sapi	83	France	regular
+Shadenis	83	France	regular
+Siqaa	83	France	regular
+Sly	83	France	regular
+Snappie	83	Belgium	regular
+Speedself	83	France	regular
+Speedy	83	Austria	regular
+Spyder	83	Singapore	regular
+Srk	83	Latvia	regular
+Steeghosaurus	83	Netherlands	regular
+Susuwi	83	Sweden	regular
+Teukka	83	Finland	regular
+Thomas jean	83	France	regular
+Vingummi101	83	Denmark	regular
+Virtuo	83	United states	regular
+Wiilox	83	France	regular
+Xiro	83	France	regular
+Ziggy	83	Norway	regular
+Waves	83	United states	streamers
+Anige	82	France	regular
+Arthaniir	82	Belgium	regular
+Astronaut	82	Netherlands	regular
+Atalata	82	France	regular
+Auris	82	Italy	regular
+Aynyx	82	France	regular
+Bayron	82	France	regular
+Berree	82	United states	regular
+Blood	82	Hungary	regular
+Bolet	82	France	regular
+Cemko	82	Turkey	regular
+Charkie	82	United states	regular
+Coob	82	England	regular
+Crxly	82	Canada	regular
+Degstm	82	France	regular
+Eatify	82	Netherlands	regular
+Fatinho	82	France	regular
+Fegir	82	Germany	regular
+Frankfurt	82	Germany	regular
+Gladavicom	82	Italy	regular
+Iihugo	82	Sweden	regular
+Iridium	82	India	regular
+Jaja	82	Morocco	regular
+Juliano	82	Germany	regular
+Lnko	82	Spain	regular
+Lordquacked	82	England	regular
+Mattouzz	82	France	regular
+Mebe12	82	Australia	regular
+Mentoz	82	Panama	regular
+Mericle	82	France	regular
+Mertzjr	82	Denmark	regular
+Mkchickwit	82	Germany	regular
+Mush	82	France	regular
+Nebula	82	England	regular
+Neodym	82	Switzerland	regular
+Noby	82	France	regular
+North	82	United states	regular
+Oxid	82	France	regular
+Rasg	82	Belgium	regular
+Razii	82	Croatia	regular
+Rin	82	France	regular
+Salty	82	France	regular
+Sambertooth	82	United states	regular
+Sano	82	Belgium	regular
+Shengar	82	Czech republic	regular
+Shoffy	82	Austria	regular
+Shpluk	82	France	regular
+Skuen	82	France	regular
+Teckso	82	France	regular
+Therenofella	82	Ireland	regular
+Toxiko	82	France	regular
+Tunder	82	France	regular
+Undier	82	France	regular
+Vanity	82	Czech republic	regular
+Vulnerra	82	France	regular
+Wazyx	82	France	regular
+Xertox	82	France	regular
+Yezaliah	82	France	regular
+Zenyy	82	France	regular
+Karma	82	France	degueux
+Vikentiyy	82	Belgium	degueux
+Aqlx	81	Belgium	regular
+Aquariummm	81	French	regular
+Ayako	81	France	regular
+Bluejinx	81	Italy	regular
+Boris	81	Germany	regular
+Bubulles	81	France	regular
+Conspiria	81	Germany	regular
+Cosmos	81	United states	regular
+Doyle	81	France	regular
+Drole2con	81	France	regular
+Eggy	81	England	regular
+Fenrir	81	France	regular
+Greevex	81	Austria	regular
+Heitone	81	Russia	regular
+Henkisme	81	Netherlands	regular
+Holfreak	81	France	regular
+Jokey	81	Germany	regular
+Keffin	81	Norway	regular
+Leaf	81	Russia	regular
+Loumar	81	Italy	regular
+Matp	81	Italy	regular
+Maxtrack	81	France	regular
+Micmo	81	France	regular
+Misha	81	Netherlands	regular
+Nalax	81	Poland	regular
+Nekojim	81	France	regular
+Nothing	81	Poland	regular
+Qez	81	United states	regular
+Ringoa	81	France	regular
+Rook1e	81	Uruguay	regular
+Sammsays	81	United states	regular
+Sharkyn	81	Czech republic	regular
+Snow	81	France	regular
+Stellarboy	81	England	regular
+Sully	81	United states	regular
+Supernowa	81	France	regular
+Taak	81	France	regular
+Tala	81	Germany	regular
+Thedarkwix	81	France	regular
+Topicc	81	Canada	regular
+Toto	81	Iceland	regular
+Trilisk	81	France	regular
+Utaa	81	France	regular
+Waves	81	United states	regular
+Wawa	81	France	regular
+Iesauka	81	France	degueux
+Aapril	80	France	regular
+Ayplex	80	French	regular
+Bmx	80	France	regular
+Cannon	80	Netherlands	regular
+Catcurlyfries	80	United states	regular
+Choum	80	France	regular
+Clm	80	France	regular
+Danyy912	80	Hungary	regular
+Dezii	80	England	regular
+Dydy	80	France	regular
+Fontur	80	France	regular
+Frizzouille	80	France	regular
+G0dz	80	French	regular
+Ggeek	80	France	regular
+Headmasterkill	80	France	regular
+Hellowmarc	80	Germany	regular
+Hikageri	80	France	regular
+Itzyouri	80	Netherlands	regular
+Jakeray	80	Denmark	regular
+Jitsky	80	Switzerland	regular
+Kakkou	80	France	regular
+Kalysan	80	France	regular
+Karlukki	80	Latvia	regular
+Karma	80	France	regular
+Kelvawesome	80	Hong kong	regular
+Knyntsje	80	Netherlands	regular
+Korch	80	France	regular
+Kuebelchris	80	Germany	regular
+Kyle	80	Brazil	regular
+Laura	80	Hungary	regular
+Loki	80	Germany	regular
+Luckyboi	80	Belgium	regular
+Mantaaa	80	Slovenia	regular
+Mathyper	80	Canada	regular
+Mellowja	80	Jamaica	regular
+Mitra	80	Netherlands	regular
+Moose	80	England	regular
+Nath	80	France	regular
+Neal	80	United states	regular
+Niko	80	France	regular
+Nrgz	80	France	regular
+Ozy	80	Canada	regular
+Pezi	80	Austria	regular
+Prowe	80	United states	regular
+Ragnarinho	80	Turkey	regular
+Rotaker	80	Poland	regular
+Sabz	80	France	regular
+Sam	80	France	regular
+Shadow	80	Italy	regular
+Simon	80	Canada	regular
+Skydruw	80	France	regular
+Snatix	80	France	regular
+Soxpanda	80	United states	regular
+Spark	80	India	regular
+Tani	80	France	regular
+Timmys	80	Netherlands	regular
+Trikz	80	France	regular
+Ujimaa	80	France	regular
+Vikentiyy	80	Belgium	regular
+Winkyface	80	Australia	regular
+Xguull	80	England	regular
+Xtrevv	80	United states	regular
+Youri	80	Belgium	regular
+Zeemuis	80	Netherlands	regular
+Iesauka	80	France	twenty
+Airwam	79	France	regular
+Arnouddddd	79	Netherlands	regular
+Bighowe	79	United states	regular
+Coz	79	France	regular
+Darker	79	France	regular
+Eltonbrawl	79	Sweden	regular
+Fayeur	79	France	regular
+Fricky	79	United states	regular
+Hummble	79	Canada	regular
+Iesauka	79	France	regular
+Jatroviv	79	Czech republic	regular
+Jdawgerson	79	Canada	regular
+Jingatak	79	France	regular
+Lattack	79	France	regular
+Majijej	79	Norway	regular
+Mixmod	79	France	regular
+Notduct	79	United states	regular
+Sympthome	79	France	regular
+Willeknas	79	Sweden	regular
+Auwrah	78	France	regular
+Blitz	78	England	regular
+Dusk	78	United states	regular
+Fiffous	78	French	regular
+Flow	78	France	regular
+Gold	78	France	regular
+Jam	78	France	regular
+Krude	78	Australia	regular
+Kwilo	78	United states	regular
+Lepaing	78	France	regular
+Olumsy	78	Belgium	regular
+Pecuniaadest	78	Germany	regular
+Qiraj	78	France	regular
+Robbalobb	78	United states	regular
+Socks	78	England	regular
+Splobs	78	England	regular
+Steg	78	Scotland	regular
+Telnei	78	France	regular
+Troulet	78	France	regular
+Viilom	78	France	regular
+Ya	78	Germany	regular
+Arsenic	77	United states	regular
+Jayotik	77	England	regular
+Jolypop	77	Netherlands	regular
+Sbeeve	77	Lithuania	regular
+Chayann	77	France	degueux
+Astalet	76	France	regular
+Beetwinn	76	Germany	regular
+Brakeless	76	United states	regular
+Dakhaa	76	Canada	regular
+Iamloobs	76	United states	regular
+Inari	76	Czech republic	regular
+Jussy	76	Netherlands	regular
+Kezskia	76	Switzerland	regular
+Kyhudji	76	France	regular
+Zombpiffy	76	Canada	regular
+Chacalou	76	Yemen	degueux
+Chayann	75	France	regular
+Ciremyxx	75	France	regular
+Coolgamerfella	75	United states	regular
+Elix'ir	75	France	regular
+Heathcliff	75	France	regular
+Helzinka	75	France	regular
+Kvikk	75	Norway	regular
+Rango	75	Ireland	regular
+Shadowwolf	75	Netherlands	regular
+Stokeine	75	Canada	regular
+Velom	75	France	regular
+Zerator	75	France	regular
+Banano	74	Switzerland	regular
+Chacalou	74	Yemen	regular
+Disturbedspace	74	Norway	regular
+Extraligant	74	England	regular
+Lumar	74	Netherlands	regular
+Maxxx	74	Belgium	regular
+Nicsoby	74	France	regular
+Slowpiou	74	France	regular
+Zerator	74	France	regular
+Fraa	73	Italy	regular
+Lirik	73	Australia	regular
+Mykeloff	73	Poland	regular
+Noahodersoo	73	Germany	regular
+Patryk	73	Poland	regular
+Rh3torique	73	France	regular
+Senjojoveler	73	France	regular
+Shadow	73	United states	regular
+Tommacino	73	Isle of man	regular
+Chocoloco	72	England	regular
+Danny	72	United states	regular
+Drarker	72	Finland	regular
+Henkan	72	Sweden	regular
+Kionn	72	Singapore	regular
+Kristiano	72	Bulgaria	regular
+Palmitos	72	Haiti	regular
+Ryou	72	Belgium	regular
+Tseko	72	France	regular
+Virtuoz	72	France	regular
+Yeager	72	France	regular
+Yeus	72	France	regular
+Baanz	71	France	regular
+Blackdream	71	France	regular
+Sawki	71	France	regular
+Valadax	71	French	regular
+Valeyn	71	Netherlands	regular
+Nastibe	71	Laos	degueux
+Atome	70	Belgium	regular
+Dantafass	70	France	regular
+Erom96	70	Italy	regular
+Lulub	70	France	regular
+Moutronis	70	France	regular
+Nicob	70	France	regular
+Nikshar	70	Mongolia	regular
+Nitralis	70	France	regular
+Serfazer	70	Latvia	regular
+Tomote	70	France	regular
+Toppen	70	France	regular
+Vevolution	70	France	regular
+Xstrab	70	Switzerland	regular
+Belette	69	France	regular
+Effect	69	Hungary	regular
+Émilien	69	France	regular
+Nastibe	69	Laos	regular
+Realjustin	69	United states	regular
+Sneakyannie	69	Slovenia	regular
+Pepite	69	France	degueux
+Chbidou	68	France	regular
+Dagos	68	France	regular
+Kuumba	68	France	regular
+Salamanka	68	France	regular
+Pépite	67	France	regular
+Polycopy	67	France	regular
+Flynn	66	French	regular
+Selrahc	66	France	regular
+Chucky	65	France	regular
+Koble	65	France	regular
+Killzerax	64	France	regular
+Orge	64	France	regular
+Paulo	64	France	regular
+Rag	64	Switzerland	regular
+Solex	64	French	regular
+Bimob	63	France	regular
+Kamikalsh	63	France	regular
+Alancommeunaigle	62	France	regular
+Chtiwid	62	France	regular
+Hartonaf	62	France	regular
+Ludow	61	France	regular
+Papetvaudois	61	Norway	regular
+Joker	59	France	regular
+Savaty	53	France	regular
+Cacacup	49	France	regular
+Aimant	48	France	regular
+Kann	40	France	regular
+Tylerzz	37	France	regular
+Wirtual	34	Norway	regular
+Sardoche	16	France	regular
+Kilou	14	France	regular
+Twisto	11	France	regular
+Kiwiunicorn	6	Germany	regular
+Enlightenment	1	United states	regular
+`;
 
+function parseRawData(raw){
+  return raw
+    .trim()
+    .split("\n")
+    .map(line => {
+      const [name, score, country, cards] = line.split("\t");
+      return {
+        name: name.trim(),
+        score: Number(score),
+        country: country.trim(),
+        cards: cards ? cards.trim() : ""
+      };
+    });
+}
 
-  // 👉 tu peux laisser TOUTE ta liste complète ici, rien d’autre à changer
-];
-
+let players = parseRawData(RAW_DATA);
 let filteredPlayers = [...players];
 let currentSort = {key:null, asc:true};
 
@@ -730,11 +989,13 @@ function render(){
   filteredPlayers.forEach((p, index) => {
     tbody.innerHTML += `
       <tr>
-        <td class="note">${index + 1}</td>
+        <td class="note">${p.rank}</td>
         <td>${p.name}</td>
         <td class="note">${p.score}</td>
         <td>${p.country}</td>
-      </tr>`;
+        <td>${p.cards}</td>
+      </tr>
+    `;
   });
 }
 
@@ -761,16 +1022,26 @@ function filterPlayers(){
   filteredPlayers = players.filter(p =>
     p.name.toLowerCase().includes(q) ||
     p.country.toLowerCase().includes(q) ||
-    String(p.score).includes(q)
+    String(p.score).includes(q) ||
+    p.cards.toLowerCase().includes(q)
   );
 
   render();
 }
 
 players.sort((a,b)=>b.score - a.score);
+
+// ✅ ON FIXE LE RANK UNE FOIS POUR TOUTES
+players.forEach((p, i) => {
+  p.rank = i + 1;
+});
+
 filteredPlayers = [...players];
 render();
+
+
 </script>
+
 
 </body>
 </html>
